@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import FeaturedExperience from './FeaturedExperience';
 import { workExperiences } from '../../data/experience/work-experience';
+import { education } from '../../data/experience/journey';
 
 export default function ExperienceSection() {
   const [activeTab, setActiveTab] = useState<'journey' | 'experience'>('experience');
@@ -63,8 +64,22 @@ export default function ExperienceSection() {
 
       {/* Journey Tab Content */}
       {activeTab === 'journey' && (
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-8 text-center">
-          <p className="text-zinc-400">Journey content coming soon...</p>
+        <div className="flex flex-col divide-y divide-zinc-800">
+          {education.map((item) => (
+            <div key={item.id} className="border-b border-zinc-800 last:border-0">
+              <div className="py-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-semibold text-white">{item.title}</h3>
+                    </div>
+                    <p className="mt-1 text-sm text-zinc-400">{item.description}</p>
+                  </div>
+                  <span className="text-sm text-zinc-400 whitespace-nowrap">{item.date}</span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </section>

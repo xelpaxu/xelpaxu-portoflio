@@ -3,10 +3,10 @@ import { Experience } from "@/types/experience";
 
 export const workExperiences: Experience[] = [
   {
-    id: "ixl",
+    id: "mit-app-invention",
     logo: "/assets/logos/ixl.png",
-    title: "IXL Solutions",
-    role: "Call Center Agent",
+    title: "MIT App Development",
+    role: "Frontend Developer",
     startDate: "May 2023",
     endDate: "August 2023",
     location: "Remote",

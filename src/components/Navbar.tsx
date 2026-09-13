@@ -54,7 +54,7 @@ export default function Navbar() {
           width: isScrolled ? 640 : 880,
         }}
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="border-border/20 border-zinc-800 bg-zinc-950 fixed left-1/2 top-6 -translate-x-1/2 rounded-2xl border-[0.5px] shadow-lg backdrop-blur-xl z-50 md:h-[60px] md:rounded-full max-w-[calc(100%-2rem)]"
+        className="border-border/20 border-zinc-800 bg-zinc-950 fixed left-1/2 top-6 -translate-x-1/2 rounded-2xl border-[0.5px] shadow-lg backdrop-blur-xl z-50 md:h-[65px] md:rounded-3xl max-w-[calc(100%-2rem)]"
       >
         <div className="flex h-full items-center justify-between px-2 md:px-4">
           {/* Left group - Profile, Experience, Projects */}
@@ -101,7 +101,6 @@ export default function Navbar() {
 
           {/* Right group - Search */}
           <div className="flex items-center gap-2 md:gap-3">
-            <div className="hidden h-5 w-px bg-zinc-700/50 md:block"></div>
 
             <button
               onClick={() => setIsSearchOpen(true)}
