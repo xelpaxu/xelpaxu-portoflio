@@ -115,7 +115,7 @@ export default function HeroSidebar() {
       <div className="flex flex-col gap-4">
         {/* Matte Black Resume Button */}
         <a
-          href="/NUQUI_CurriculumVitae.pdf"
+          href="/NUQUI_CV.pdf"
           target="_blank"
           rel="noopener noreferrer"
           className="group inline-flex w-fit items-center gap-3 rounded-full border border-line bg-surface px-5 py-2.5 text-sm font-medium text-strong transition hover:bg-surface hover:text-foreground"
