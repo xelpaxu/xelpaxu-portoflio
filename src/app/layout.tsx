@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Hanken_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from '@/components/ThemeProvider';
 import NekoCompanion from '@/components/NekoCompanion';
 
-const hankenGrotesk = Hanken_Grotesk({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+const hankenGrotesk = localFont({
+  src: "./fonts/hanken-grotesk-latin.woff2",
+  weight: "300 800",
+  display: "swap",
   variable: "--font-hanken",
 });
 
