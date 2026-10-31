@@ -2,32 +2,16 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import TechStack from '@/components/TechStack';
+import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
 import { Experience } from '@/types/experience';
 
-interface FeaturedExperienceProps extends Experience {}
-
-// Use DevIcon CDN - provides colored icons
-const getTechIconUrl = (tech: string): string => {
-  const iconMap: { [key: string]: string } = {
-    'Next.js': 'nextjs',
-    'React': 'react',
-    'TypeScript': 'typescript',
-    'Tailwind CSS': 'tailwindcss',
-    'Figma': 'figma',
-    'Node.js': 'nodejs',
-    'Express': 'express',
-    'MongoDB': 'mongodb',
-    'Python': 'python',
-    'Django': 'django',
-    'PostgreSQL': 'postgresql',
-    'Docker': 'docker',
-  };
-  
-  const iconName = iconMap[tech] || tech.toLowerCase().replace(/\./g, '').replace(/\s/g, '');
-  return `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${iconName}/${iconName}-original.svg`;
-};
+type FeaturedExperienceProps = Experience & { card?: boolean };
 
 export default function FeaturedExperience({
+  card = false,
+  id,
   logo,
   title,
   role,
@@ -38,43 +22,35 @@ export default function FeaturedExperience({
   description,
   notes
 }: FeaturedExperienceProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [logoFailed, setLogoFailed] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(card);
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const target = e.currentTarget;
-    const tech = target.getAttribute('data-tech') || '';
-    
-    // Try fallback URL
-    const fallbackUrl = `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${tech.toLowerCase()}/${tech.toLowerCase()}-original.svg`;
-    
-    if (target.src !== fallbackUrl) {
-      target.src = fallbackUrl;
-    } else {
-      // If both fail, hide the image
-      target.style.display = 'none';
-    }
-  };
 
   return (
-    <div className="border-b border-zinc-800 last:border-0">
+    <article className="border-b border-line bg-transparent last:border-0">
       <div className="py-6">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex flex-1 items-start gap-4">
-            <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-800">
-              <Image
+        <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:gap-4">
+          <div className="flex min-w-0 flex-1 items-start gap-4">
+            <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-surface-raised">
+              {logoFailed ? <span className="flex h-full items-center justify-center text-sm text-muted">{title.slice(0, 2)}</span> : <Image
+                onError={() => setLogoFailed(true)}
+                sizes="48px"
                 src={logo}
                 alt={`${title} logo`}
                 fill
                 className="object-cover p-2"
-              />
+              />}
             </div>
             
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-semibold text-white">{title}</h3>
+                <h3 className="text-base font-semibold text-foreground"><Link href={`/experience#${id}`} className="transition-colors hover:text-accent">{title}</Link></h3>
                 <button
+                  aria-label={`${isExpanded ? "Collapse" : "Expand"} ${title}`}
+                  aria-expanded={isExpanded}
+                  aria-controls={`${id}-details`}
                   onClick={() => setIsExpanded(!isExpanded)}
-                  className="rounded-lg p-0.5 transition-all hover:bg-zinc-800"
+                  className="flex size-11 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-surface-raised"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +58,7 @@ export default function FeaturedExperience({
                     viewBox="0 0 24 24"
                     strokeWidth={2}
                     stroke="currentColor"
-                    className={`h-4 w-4 text-zinc-500 transition-transform duration-300 ${
+                    className={`h-4 w-4 text-subtle transition-transform duration-300 ${
                       isExpanded ? 'rotate-180' : ''
                     }`}
                   >
@@ -94,16 +70,16 @@ export default function FeaturedExperience({
                   </svg>
                 </button>
               </div>
-              <p className="text-sm text-zinc-400">{role}</p>
+              <p className="mt-1 text-sm text-muted">{role}</p>
             </div>
           </div>
 
-          <div className="flex flex-col items-end gap-1 flex-shrink-0">
-            <span className="text-sm text-zinc-400 whitespace-nowrap">
+          <div className="flex flex-col items-start gap-1 pl-16 sm:items-end sm:pl-0 sm:flex-shrink-0">
+            <span className="text-sm text-muted whitespace-nowrap">
               {startDate} - {endDate}
             </span>
             {location && (
-              <span className="text-xs text-zinc-500">
+              <span className="text-xs text-subtle">
                 {location}
               </span>
             )}
@@ -112,42 +88,25 @@ export default function FeaturedExperience({
       </div>
 
       {isExpanded && (
-        <div className="pb-6 pl-16">
+        <div id={`${id}-details`} className={card ? "border-t border-line pb-6 pt-5 sm:ml-16" : "pb-6 pl-0 sm:pl-16"}>
           {description && (
-            <p className="mb-4 text-sm text-zinc-400">{description}</p>
+            <p className="mb-4 text-sm text-muted">{description}</p>
           )}
 
-          {technologies && technologies.length > 0 && (
-            <div className="mb-4 flex flex-wrap gap-2">
-              {technologies.map((tech) => (
-                <span
-                  key={tech}
-                  className="inline-flex cursor-default items-center gap-1.5 rounded-[0.5rem] border border-dashed border-zinc-500 bg-white/5 px-2.5 py-[0.2rem] text-sm text-zinc-300 backdrop-blur-sm"
-                >
-                  <img
-                    src={getTechIconUrl(tech)}
-                    alt={`${tech} icon`}
-                    data-tech={tech}
-                    className="h-4 w-4 object-contain"
-                    onError={handleImageError}
-                  />
-                  <span className="font-medium">{tech}</span>
-                </span>
-              ))}
-            </div>
-          )}
+          {!!technologies?.length && <div className="mb-5"><TechStack tags={technologies} /></div>}
 
           {notes && notes.length > 0 && (
-            <div className="space-y-1">
+            <div className="space-y-3">
               {notes.map((note, index) => (
-                <p key={index} className="text-sm text-zinc-400">
+                <p key={index} className="text-sm text-muted">
                   • {note}
                 </p>
               ))}
             </div>
           )}
+          {card && <Link href={`/experience#${id}`} className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm text-strong hover:text-foreground">View role details<ArrowUpRight className="size-4" aria-hidden="true" /></Link>}
         </div>
       )}
-    </div>
+    </article>
   );
 }
