@@ -1,0 +1,10 @@
+Neko cursor companion
+
+Sprite sheet source: https://github.com/crgimenes/neko/blob/trunk/assets/neko.png
+Project: https://github.com/crgimenes/neko
+Copyright (c) 2021, Cesar Gimenes. BSD 2-Clause License; see LICENSE.
+
+The project credits the classic Neko sprites and uses the oneko 8-by-4
+sprite-sheet layout. The portfolio's browser animation controller is a
+TypeScript implementation based on the project's documented sprite positions
+and chase / idle / grooming / sleep behavior. No Go binary is shipped or run.

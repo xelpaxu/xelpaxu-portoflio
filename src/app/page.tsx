@@ -1,6 +1,6 @@
 "use client";
 
-import { Code2, Layers, Smartphone } from 'lucide-react';
+import AboutNotebook from '@/components/AboutNotebook';
 import { ShaderBackground } from '@/components/ShaderBackground';
 import { GrainOverlay } from '@/components/GrainOverlay';
 import HeroSidebar from '@/components/HeroSidebar';
@@ -10,12 +10,6 @@ import ProjectsSection from '@/components/projects/ProjectSection';
 import SectionHeader from '@/components/SectionHeader';
 import GitHubActivity from '@/components/GitHubActivity';
 import ContactSection from '@/components/ContactSection';
-
-const interests = [
-  { icon: Code2, title: 'Web development', description: 'Interfaces and the systems behind them, built with React, Next.js, and TypeScript.' },
-  { icon: Smartphone, title: 'Mobile experiences', description: 'Taking ideas beyond the browser with Flutter and React Native.' },
-  { icon: Layers, title: 'Exploring AI', description: 'Learning how AI can become a useful part of everyday applications.' },
-];
 
 export default function HomePage() {
   return (
@@ -38,13 +32,7 @@ export default function HomePage() {
               </section>
               <section id="about" aria-labelledby="about-heading" className="scroll-mt-28">
                 <SectionHeader title="Get to know me" subtitle="Beyond the code" id="about-heading" />
-                <div className="border-l-2 border-line-strong pl-5 sm:pl-6">
-                  <p className="text-lg leading-8 tracking-tight text-strong">I’m Axel, a developer based in Iloilo City, Philippines. I like turning real-world problems into useful web and mobile applications.</p>
-                  <p className="mt-4 text-sm leading-7 text-muted">My work brings together interfaces, application logic, and a curiosity for AI. I’m interested in how these pieces fit together to make software that feels simple to use.</p>
-                </div>
-                <div className="mt-7 grid gap-3 sm:grid-cols-3">
-                  {interests.map(({ icon: Icon, title, description }) => <article key={title} className="border-t border-line bg-transparent pt-5"><Icon className="mb-5 size-5 text-muted" aria-hidden="true" /><h3 className="text-sm font-semibold">{title}</h3><p className="mt-2 text-xs leading-6 text-muted">{description}</p></article>)}
-                </div>
+                <AboutNotebook />
               </section>
               <section id="github" aria-labelledby="github-heading" className="scroll-mt-28">
                 <SectionHeader title="On GitHub" subtitle="Building in public" id="github-heading" />

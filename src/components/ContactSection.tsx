@@ -20,7 +20,7 @@ export default function ContactSection() {
       <h3 className="max-w-md text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">Have something in mind?<br /><span className="text-muted">Let’s build it together.</span></h3>
       <p className="mt-4 max-w-md text-sm leading-7 text-muted">A project idea, an opportunity, or a conversation about something you’re building. My inbox is open.</p>
       <div className="mt-7 flex flex-wrap gap-3">
-        <a href={`mailto:${profile.email}`} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-medium text-inverse transition-colors hover:bg-action-hover"><Mail className="size-4" aria-hidden="true" />Say hello<ArrowUpRight className="size-4" aria-hidden="true" /></a>
+        <a href={`mailto:${profile.email}`} className="inline-flex min-h-11 items-center gap-2 rounded-full bg-accent px-5 py-3 text-sm font-medium text-accent-ink transition-colors hover:bg-action-hover"><Mail className="size-4" aria-hidden="true" />Say hello<ArrowUpRight className="size-4" aria-hidden="true" /></a>
         <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line px-5 py-3 text-sm font-medium transition-colors hover:bg-surface-raised"><FaGithub className="size-4" aria-hidden="true" />Find me on GitHub</a>
       </div>
       <div className="mt-7 flex items-center gap-2 border-t border-line pt-5">
