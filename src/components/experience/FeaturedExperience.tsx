@@ -6,11 +6,14 @@ import TechStack from '@/components/TechStack';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { Experience } from '@/types/experience';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 
-type FeaturedExperienceProps = Experience & { card?: boolean };
+type FeaturedExperienceProps = Experience & { card?: boolean; expanded?: boolean; onToggle?: () => void };
 
 export default function FeaturedExperience({
   card = false,
+  expanded,
+  onToggle,
   id,
   logo,
   title,
@@ -23,7 +26,9 @@ export default function FeaturedExperience({
   notes
 }: FeaturedExperienceProps) {
   const [logoFailed, setLogoFailed] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(card);
+  const [localExpanded, setLocalExpanded] = useState(card);
+  const isExpanded = expanded ?? localExpanded;
+  const reducedMotion = useReducedMotion();
 
 
   return (
@@ -49,7 +54,7 @@ export default function FeaturedExperience({
                   aria-label={`${isExpanded ? "Collapse" : "Expand"} ${title}`}
                   aria-expanded={isExpanded}
                   aria-controls={`${id}-details`}
-                  onClick={() => setIsExpanded(!isExpanded)}
+                  onClick={() => onToggle ? onToggle() : setLocalExpanded(!isExpanded)}
                   className="flex size-11 shrink-0 items-center justify-center rounded-lg transition-colors hover:bg-surface-raised"
                 >
                   <svg
@@ -87,8 +92,9 @@ export default function FeaturedExperience({
         </div>
       </div>
 
-      {isExpanded && (
-        <div id={`${id}-details`} className={card ? "border-t border-line pb-6 pt-5 sm:ml-16" : "pb-6 pl-0 sm:pl-16"}>
+      <AnimatePresence initial={false}>{isExpanded && (
+        <motion.div id={`${id}-details`} initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: reducedMotion ? 0 : 0.25 }} className="overflow-hidden">
+        <div className={card ? "border-t border-line pb-6 pt-5 sm:ml-16" : "pb-6 pl-0 sm:pl-16"}>
           {description && (
             <p className="mb-4 text-sm text-muted">{description}</p>
           )}
@@ -106,7 +112,8 @@ export default function FeaturedExperience({
           )}
           {card && <Link href={`/experience#${id}`} className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm text-strong hover:text-foreground">View role details<ArrowUpRight className="size-4" aria-hidden="true" /></Link>}
         </div>
-      )}
+        </motion.div>
+      )}</AnimatePresence>
     </article>
   );
 }

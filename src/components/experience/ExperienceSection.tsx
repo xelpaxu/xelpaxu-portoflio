@@ -9,6 +9,7 @@ import { education } from '../../data/experience/journey';
 
 export default function ExperienceSection({ showAll = false }: { showAll?: boolean }) {
   const [activeTab, setActiveTab] = useState<'journey' | 'experience'>('experience');
+  const [expandedRoles, setExpandedRoles] = useState<string[]>(() => showAll ? workExperiences.map(role => role.id) : []);
   
   // Get only first 3 experiences for featured section
   const orderedExperiences = [...workExperiences].sort((a, b) => Date.parse(b.startDate) - Date.parse(a.startDate));
@@ -17,14 +18,14 @@ export default function ExperienceSection({ showAll = false }: { showAll?: boole
   return (
     <section id="experience" className="scroll-mt-28 bg-transparent" aria-label="Work and education">
       {/* Toggle between Journey and Experience */}
-      <div className="mb-6 flex justify-start">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="inline-flex gap-5 border-b border-line">
           <button
             aria-pressed={activeTab === 'journey'}
             onClick={() => setActiveTab('journey')}
             className={`min-h-11 border-b-2 px-1 text-sm font-medium transition-colors ${
               activeTab === 'journey'
-                ? 'border-foreground text-foreground'
+                ? 'border-accent text-accent'
                 : 'border-transparent text-subtle hover:text-strong'
             }`}
           >
@@ -35,13 +36,14 @@ export default function ExperienceSection({ showAll = false }: { showAll?: boole
             onClick={() => setActiveTab('experience')}
             className={`min-h-11 border-b-2 px-1 text-sm font-medium transition-colors ${
               activeTab === 'experience'
-                ? 'border-foreground text-foreground'
+                ? 'border-accent text-accent'
                 : 'border-transparent text-subtle hover:text-strong'
             }`}
           >
             Experience
           </button>
         </div>
+        {activeTab === 'experience' && <button type="button" onClick={() => setExpandedRoles(featuredExperiences.every(role => expandedRoles.includes(role.id)) ? [] : featuredExperiences.map(role => role.id))} className="min-h-11 text-xs text-accent hover:underline">{featuredExperiences.every(role => expandedRoles.includes(role.id)) ? 'Collapse all' : 'Expand all'}</button>}
       </div>
 
       {/* Experience List - Only 3 items */}
@@ -49,7 +51,7 @@ export default function ExperienceSection({ showAll = false }: { showAll?: boole
         <>
           <div className="experience-timeline flex flex-col">
             {featuredExperiences.map((experience) => (
-              <FeaturedExperience key={experience.id} {...experience} card={showAll} />
+              <FeaturedExperience key={experience.id} {...experience} card={showAll} expanded={expandedRoles.includes(experience.id)} onToggle={() => setExpandedRoles(previous => previous.includes(experience.id) ? previous.filter(id => id !== experience.id) : [...previous, experience.id])} />
             ))}
           </div>
 

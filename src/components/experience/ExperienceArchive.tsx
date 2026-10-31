@@ -15,7 +15,7 @@ export default function ExperienceArchive() {
   return (
     <div className="mx-auto max-w-[760px]">
       <nav aria-label="Experience sections" className="mb-10 flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm sm:mb-14">
-        <a href="#work-history" className="inline-flex min-h-11 items-center gap-2 border-b border-foreground text-foreground">Work experience<ArrowDownRight className="size-3.5" aria-hidden="true" /></a>
+        <a href="#work-history" className="inline-flex min-h-11 items-center gap-2 border-b border-accent text-accent">Work experience<ArrowDownRight className="size-3.5" aria-hidden="true" /></a>
         <a href="#learning-journey" className="inline-flex min-h-11 items-center gap-2 border-b border-transparent text-subtle transition-colors hover:border-line-strong hover:text-foreground">Learning journey<ArrowDownRight className="size-3.5" aria-hidden="true" /></a>
       </nav>
       <section id="work-history" aria-labelledby="work-heading" className="scroll-mt-28">
