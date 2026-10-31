@@ -71,7 +71,7 @@ export default function Navbar() {
             >
               <div className="relative h-6 w-6 overflow-hidden rounded-[10px] md:h-7 md:w-7">
                 <Image
-                  src="/assets/profile.jpg"
+                  src="/assets/logos/navbar-icon.jpg"
                   alt="Profile"
                   sizes="28px"
                   fill
