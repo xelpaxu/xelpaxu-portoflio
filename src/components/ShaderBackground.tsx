@@ -4,6 +4,7 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ShaderMaterial } from 'three';
+import { useTheme } from './ThemeProvider';
 
 const vertexShader = `
   varying vec2 vUv;
@@ -16,7 +17,6 @@ const vertexShader = `
 const fragmentShader = `
   uniform float uTime;
   uniform vec2 uResolution;
-  uniform float uIsDark;
   varying vec2 vUv;
 
   // ── Simplex noise ──────────────────────────────────────────────────
@@ -89,7 +89,6 @@ const fragmentShader = `
     float f = fbm(uv * 3.0 + r * 1.8 + t * 0.5);
     f = f * 0.5 + 0.5;
 
-    if (uIsDark > 0.5) {
       // ── DARK MODE: Black background with subtle lighter swirls ──────────────────────────────
       float bright = smoothstep(0.30, 0.80, f);
       bright = pow(bright, 1.6);
@@ -113,76 +112,49 @@ const fragmentShader = `
       bright = max(bright, 0.012);
 
       gl_FragColor = vec4(vec3(bright), 1.0);
-    } else {
-      // ── LIGHT MODE: Warm white background with subtle darker swirls ──────────────────────────────
-      float bright = smoothstep(0.20, 0.70, f);
-      bright = pow(bright, 1.4);
-      // Invert: start from white (0.92), subtract dark swirls
-      bright = 0.92 - bright * 0.10;  // Range: ~0.82 to 0.92
-
-      // ── Ordered dither ──────────────────────────────────────
-      vec2 screenPos = uv * uResolution;
-      float noise = ign(screenPos);
-      float dither = (noise - 0.5) * 0.015 * (1.0 - bright * 0.5);
-      bright += dither;
-      bright = clamp(bright, 0.75, 1.0);
-
-      // ── Soft vignette (much subtler for light mode) ────────────────────────────────────────────
-      vec2 vigUv = uv - 0.5;
-      vigUv.x *= 0.85;
-      float vignette = 1.0 - dot(vigUv, vigUv) * 1.2;
-      vignette = clamp(vignette, 0.88, 1.0);
-
-      bright *= vignette;
-
-      gl_FragColor = vec4(vec3(bright), 1.0);
-    }
   }
 `;
 
 const TARGET_FPS = 30;
 const FRAME_INTERVAL = 1000 / TARGET_FPS;
 
-function AnimatedShader({ isDark }: { isDark: boolean }) {
+function AnimatedShader() {
   const materialRef = useRef<ShaderMaterial>(null);
-  const resolutionRef = useRef({
-    x: typeof window !== 'undefined' ? window.innerWidth : 1920,
-    y: typeof window !== 'undefined' ? window.innerHeight : 1080,
-  });
-  const { invalidate } = useThree();
-  const isDarkRef = useRef(isDark);
-
+  const { invalidate, size } = useThree();
   const uniforms = useMemo(
     () => ({
       uTime: { value: 0 },
-      uResolution: { value: { ...resolutionRef.current } },
-      uIsDark: { value: isDarkRef.current ? 1.0 : 0.0 },
+      uResolution: { value: { x: 1920, y: 1080 } },
     }),
     [],
   );
 
   useEffect(() => {
-    const id = setInterval(() => invalidate(), FRAME_INTERVAL);
-    return () => clearInterval(id);
-  }, [invalidate]);
-
-  useEffect(() => {
-    const onResize = () => {
-      resolutionRef.current = { x: window.innerWidth, y: window.innerHeight };
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let interval: ReturnType<typeof setInterval> | undefined;
+    const sync = () => {
+      if (interval) clearInterval(interval);
+      interval = undefined;
+      invalidate();
+      if (!document.hidden && !preference.matches) {
+        interval = setInterval(invalidate, FRAME_INTERVAL);
+      }
     };
-    window.addEventListener('resize', onResize, { passive: true });
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
-
-  useEffect(() => {
-    isDarkRef.current = isDark;
-  }, [isDark]);
+    sync();
+    document.addEventListener('visibilitychange', sync);
+    preference.addEventListener('change', sync);
+    return () => {
+      if (interval) clearInterval(interval);
+      document.removeEventListener('visibilitychange', sync);
+      preference.removeEventListener('change', sync);
+    };
+  }, [invalidate]);
 
   useFrame((state) => {
     if (!materialRef.current) return;
     materialRef.current.uniforms.uTime.value = state.clock.elapsedTime;
-    materialRef.current.uniforms.uResolution.value = resolutionRef.current;
-    materialRef.current.uniforms.uIsDark.value = isDarkRef.current ? 1.0 : 0.0;
+    materialRef.current.uniforms.uResolution.value.x = size.width;
+    materialRef.current.uniforms.uResolution.value.y = size.height;
   });
 
   return (
@@ -201,23 +173,32 @@ function AnimatedShader({ isDark }: { isDark: boolean }) {
 }
 
 export function ShaderBackground() {
+  const { theme } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    const frame = requestAnimationFrame(() => setIsMounted(true));
+    return () => cancelAnimationFrame(frame);
   }, []);
   if (!isMounted) return null;
+  if (theme === 'light') {
+    return (
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        <div className="light-grid" />
+      </div>
+    );
+  }
 
   return (
-    <div className="fixed inset-0 -z-20">
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-20">
       <Canvas
         camera={{ position: [0, 0, 1], near: 0.1, far: 10 }}
         style={{ background: 'transparent' }}
-        gl={{ alpha: false, antialias: false, powerPreference: 'default' }}
+        gl={{ alpha: true, antialias: false, powerPreference: 'default' }}
         dpr={1}
         frameloop="demand"
       >
-        <AnimatedShader isDark={true} />
+        <AnimatedShader />
       </Canvas>
     </div>
   );

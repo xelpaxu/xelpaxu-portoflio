@@ -1,10 +1,10 @@
 // components/common/GrainOverlay.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 export const GrainOverlay = () => {
-  const [dynamicNoise, setDynamicNoise] = useState<string>('');
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const canvas = document.createElement('canvas');
@@ -20,30 +20,20 @@ export const GrainOverlay = () => {
       img.data[i + 3] = 10;
     }
     ctx.putImageData(img, 0, 0);
-    setDynamicNoise(canvas.toDataURL());
+    if (overlayRef.current) overlayRef.current.style.backgroundImage = `url("${canvas.toDataURL()}")`;
   }, []);
 
   return (
     <>
-      {/* Static noise overlay */}
+      {/* Grain texture generated locally */}
       <div
+        ref={overlayRef}
+        aria-hidden="true"
         style={{
-          backgroundImage: 'url("/noise.webp")',
-          backgroundRepeat: 'repeat',
-          backgroundSize: '200px 200px',
-          filter: 'blur(30px)',
-        }}
-        className="fixed inset-0 pointer-events-none -z-10 opacity-[0.05] mix-blend-soft-light dark:opacity-[0.08]"
-      />
-      
-      {/* Dynamic noise overlay */}
-      <div
-        style={{
-          backgroundImage: `url("${dynamicNoise}")`,
           backgroundRepeat: 'repeat',
           backgroundSize: '128px 128px',
         }}
-        className="fixed inset-0 pointer-events-none -z-10 opacity-[0.03] mix-blend-multiply dark:opacity-[0.05]"
+        className="fixed inset-0 pointer-events-none -z-10 hidden mix-blend-multiply dark:block dark:opacity-[0.05]"
       />
     </>
   );

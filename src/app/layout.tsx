@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 const hankenGrotesk = Hanken_Grotesk({
   subsets: ["latin"],
@@ -19,11 +20,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `try{document.documentElement.dataset.theme=localStorage.getItem('portfolio-theme')==='light'?'light':'dark'}catch{}` }} />
+      </head>
       <body
-        className={`${hankenGrotesk.className} ${hankenGrotesk.variable} bg-black text-white antialiased`}
+        className={`${hankenGrotesk.className} ${hankenGrotesk.variable} bg-page text-foreground antialiased`}
       >
-          {children}
+          <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
