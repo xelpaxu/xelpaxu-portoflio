@@ -1,37 +1,17 @@
-// components/projects/ProjectsSection.tsx
-"use client";
-
-import { projects } from '../../data/projects/projects';
-import ProjectCard from './ProjectCard';
-import ScrollReveal from '../ScrollReveal';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
+import { projects } from '@/data/projects/projects';
+import ProjectPreviewCard from './ProjectPreviewCard';
 
 export default function ProjectsSection() {
-  // Get featured projects (first 3)
-  const featuredProjects = projects.filter(p => p.featured === true).slice(0, 3);
-  const displayProjects = featuredProjects.length > 0 ? featuredProjects : projects.slice(0, 3);
-
+  const featured = projects.filter(project => project.featured);
+  const selected = featured.length ? featured : projects.slice(0, 3);
   return (
-    <div className="space-y-6">
-      {/* Projects Grid - 2 columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {displayProjects.map((project, index) => (
-          <ScrollReveal key={project.id} delay={0.1 * (index + 1)}>
-            <ProjectCard {...project} />
-          </ScrollReveal>
-        ))}
+    <div>
+      <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2">
+        {selected.map(project => <ProjectPreviewCard key={project.id} project={project} iconOnly />)}
       </div>
-
-      {/* View All Link */}
-      {projects.length > 3 && (
-        <div className="mt-8 flex justify-center">
-          <a
-            href="/projects"
-            className="inline-flex items-center gap-2 text-sm text-zinc-500 transition-all hover:text-zinc-300 hover:gap-3"
-          >
-            View all projects →
-          </a>
-        </div>
-      )}
+      <Link href="/projects" className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-muted hover:text-foreground">Explore all projects<ArrowRight className="size-4" aria-hidden="true" /></Link>
     </div>
   );
 }
