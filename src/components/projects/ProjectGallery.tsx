@@ -37,9 +37,12 @@ export default function ProjectGallery({ title, images }: { title: string; image
   if (!multiple) return (
     <figure className="mb-8">
       <div className="relative aspect-[16/10] overflow-hidden rounded-2xl ring-1 ring-foreground/10 sm:aspect-[2/1]">
-        <Image src={current.src} alt={current.alt} fill priority sizes="(max-width: 1024px) 100vw, 1024px" style={{ objectFit: 'contain', objectPosition: current.position ?? 'center 65%' }} />
+        <Image src={current.src} alt={current.alt} fill priority unoptimized sizes="(max-width: 1024px) 100vw, 1024px" style={{ objectFit: 'contain', objectPosition: current.position ?? 'center 65%' }} />
       </div>
-      {current.caption && <figcaption className="mt-3 text-xs text-subtle">{current.caption}</figcaption>}
+      <figcaption className="mt-3 flex flex-wrap items-center justify-between gap-3 text-xs text-subtle">
+        {current.caption && <span>{current.caption}</span>}
+        <a href={current.src} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-foreground">Open full-resolution image<span className="sr-only"> (opens in a new tab)</span></a>
+      </figcaption>
     </figure>
   );
 
@@ -97,7 +100,7 @@ export default function ProjectGallery({ title, images }: { title: string; image
               style={{ touchAction: 'pan-y', transformStyle: 'preserve-3d' }}
             >
               <div className="absolute inset-0 overflow-hidden rounded-xl border border-line bg-page shadow-card-hover sm:rounded-2xl" style={{ backfaceVisibility: 'hidden' }}>
-                <Image src={image.src} alt={isFront ? image.alt : ''} aria-hidden={!isFront} fill priority={i === 0} draggable={false} sizes="(max-width: 1024px) 76vw, 780px" className="pointer-events-none select-none" style={{ objectFit: 'contain', objectPosition: image.position ?? 'center 65%' }} />
+                <Image src={image.src} alt={isFront ? image.alt : ''} aria-hidden={!isFront} fill priority={i === 0} unoptimized draggable={false} sizes="(max-width: 1024px) 76vw, 780px" className="pointer-events-none select-none" style={{ objectFit: 'contain', objectPosition: image.position ?? 'center 65%' }} />
                 {!isFront && <button type="button" tabIndex={-1} aria-hidden="true" onClick={() => goTo(i)} className="absolute inset-0 cursor-pointer" />}
               </div>
             </motion.div>;
@@ -107,6 +110,7 @@ export default function ProjectGallery({ title, images }: { title: string; image
       <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
         <div className="min-w-0 flex-1" aria-live="polite" aria-atomic="true">
           <p className="flex items-center gap-2 text-xs text-subtle"><Images className="size-3.5 shrink-0" aria-hidden="true" /><span>{current.caption ?? current.alt}</span></p>
+          <a href={current.src} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-xs text-subtle underline underline-offset-4 hover:text-foreground">Open full-resolution image<span className="sr-only"> (opens in a new tab)</span></a>
           {multiple && <p className="sr-only">Image {activeIndex + 1} of {images.length}</p>}
         </div>
         {multiple && <div className="flex shrink-0 items-center gap-2">

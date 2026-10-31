@@ -29,8 +29,8 @@ export default function ProjectExplorer() {
         <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm text-muted hover:text-foreground">More on GitHub<ArrowUpRight className="size-4" aria-hidden="true" /></a>
       </div>
       <div className="mx-auto mb-8 flex max-w-2xl flex-wrap items-center justify-center gap-2" aria-label="Filter by technology">
-        {quickTechnologies.map(tech => <button key={tech} aria-pressed={technology === tech} onClick={() => setTechnology(tech)} className={`min-h-11 rounded-full border px-4 py-2 text-xs font-medium transition-colors ${technology === tech ? 'border-foreground bg-foreground text-inverse' : 'border-line bg-transparent text-muted hover:border-line-strong hover:text-foreground'}`}>{tech}</button>)}
-        <select aria-label="More technology filters" value={quickTechnologies.includes(technology) ? '' : technology} onChange={event => { if (event.target.value) setTechnology(event.target.value); }} className="min-h-11 max-w-full rounded-full border border-line bg-page px-3 text-xs text-muted">
+        {quickTechnologies.map(tech => <button key={tech} aria-pressed={technology === tech} onClick={() => setTechnology(tech)} className={`min-h-11 px-4 py-2 text-xs font-bold ${technology === tech ? 'text-white' : 'bg-transparent text-muted hover:border-line-strong hover:text-foreground'}`}>{tech}</button>)}
+        <select aria-label="More technology filters" value={quickTechnologies.includes(technology) ? '' : technology} onChange={event => { if (event.target.value) setTechnology(event.target.value); }} className="min-h-11 max-w-full bg-page px-3 text-xs text-muted">
           <option value="">More stacks</option>
           {technologies.filter(tech => !quickTechnologies.includes(tech)).map(tech => <option key={tech} value={tech}>{tech}</option>)}
         </select>

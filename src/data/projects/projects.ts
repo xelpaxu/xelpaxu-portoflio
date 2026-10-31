@@ -113,7 +113,11 @@ const projectEntries: Project[] = [
     "id": "amogus",
     "title": "Amogus",
     "images": [
-      "/assets/projects/amogus.svg"
+      "/assets/projects/amogus.png",
+      "/assets/projects/amogus1.png",
+      "/assets/projects/amogus2.png",
+      "/assets/projects/amogus3.png",
+      "/assets/projects/amogus4.png"
     ],
     "imageLabel": "Project artwork",
     "description": "A multiplayer social-deduction game with player setup, shared room lobbies, secret roles, and real-time game sessions.",
@@ -163,7 +167,9 @@ const projectEntries: Project[] = [
     "id": "memowee",
     "title": "Memowee",
     "images": [
-      "/assets/projects/memowee.svg"
+      "/assets/projects/memowee.png",
+      "/assets/projects/memowee2.png",
+      "/assets/projects/memowee3.png",
     ],
     "imageLabel": "Project artwork",
     "description": "A camera-based face-identification prototype with profile registration, learned face embeddings, adjustable recognition thresholds, and an activity log.",

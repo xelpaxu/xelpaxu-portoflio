@@ -13,7 +13,7 @@ export default function ProjectPreviewCard({ project, iconOnly = false }: { proj
   return (
     <article className="group flex min-w-0 flex-col bg-transparent">
       {cover && <Link href={project.link} aria-label={`Preview ${project.title}`} className="relative mb-5 block aspect-[16/10] overflow-hidden rounded-xl ring-1 ring-inset ring-foreground/10 focus-visible:outline-offset-4">
-        <Image src={cover.src} alt={cover.alt} fill sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) 45vw, 540px" style={{ objectPosition: cover.position ?? 'center', objectFit: cover.fit ?? 'cover' }} className="transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.035]" />
+        <Image src={cover.src} alt={cover.alt} fill unoptimized sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) 45vw, 540px" style={{ objectPosition: cover.position ?? 'center', objectFit: cover.fit ?? 'cover' }} className="transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.035]" />
         {cover.caption && <span className="absolute bottom-2.5 right-2.5 rounded-md bg-black/60 px-2 py-1 text-[10px] text-white backdrop-blur-sm">{cover.caption}</span>}
       </Link>}
       <div className="flex flex-1 items-start justify-between gap-2">

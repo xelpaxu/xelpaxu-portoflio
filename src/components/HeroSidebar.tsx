@@ -73,7 +73,7 @@ export default function HeroSidebar() {
         >
           <span className="absolute inset-0 overflow-hidden rounded-full">
             <motion.span className="absolute -inset-1" style={{ x: reducedMotion ? 0 : portraitX, y: reducedMotion ? 0 : portraitY }}>
-              <Image src="/assets/profile.jpg" alt="Axel John Nuqui" fill sizes="104px" className="object-cover" priority />
+              <Image src="/assets/profile_xelpaxu.jpg" alt="Axel John Nuqui" fill sizes="104px" className="object-cover" priority />
             </motion.span>
           </span>
           <span aria-hidden="true" className="absolute -bottom-1 -right-1 flex size-7 items-center justify-center rounded-full border border-line bg-page text-muted transition-colors group-hover:border-line-strong group-hover:text-foreground group-focus-visible:text-foreground"><ArrowDownRight className="size-3.5" /></span>
