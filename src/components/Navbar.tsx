@@ -7,6 +7,8 @@ import { usePathname } from 'next/navigation';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
+import AccentPicker from './AccentPicker';
+import PortfolioSearch from './PortfolioSearch';
 
 export default function Navbar() {
   const reducedMotion = useReducedMotion();
@@ -85,7 +87,7 @@ export default function Navbar() {
               href="/experience"
               className={`rounded-full px-2 py-1.5 text-xs font-medium transition-all duration-300 md:px-3 md:text-base ${
                 activeSection === 'experience'
-                  ? 'text-foreground'
+                  ? 'text-accent'
                   : 'text-muted hover:text-foreground'
               }`}
             >
@@ -96,7 +98,7 @@ export default function Navbar() {
               href="/projects"
               className={`rounded-full px-2 py-1.5 text-xs font-medium transition-all duration-300 md:px-3 md:text-base ${
                 activeSection === 'projects'
-                  ? 'text-foreground'
+                  ? 'text-accent'
                   : 'text-muted hover:text-foreground'
               }`}
             >
@@ -106,6 +108,7 @@ export default function Navbar() {
 
           {/* Right group - Search */}
           <div className="flex items-center gap-2 md:gap-3">
+            <AccentPicker />
             <button
               type="button"
               onClick={toggleTheme}
@@ -126,7 +129,7 @@ export default function Navbar() {
 
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="flex items-center gap-1 rounded-lg border border-line bg-surface-raised px-2 py-1.5 transition-all duration-300 hover:border-line-strong hover:bg-surface-hover md:gap-2 md:px-3"
+              className="hidden items-center gap-1 rounded-lg border border-line bg-surface-raised px-2 py-1.5 transition-all duration-300 hover:border-line-strong hover:bg-surface-hover sm:flex md:gap-2 md:px-3"
             >
               <span className="text-xs text-muted transition-colors group-hover:text-foreground md:text-sm">
                 Search
@@ -139,46 +142,7 @@ export default function Navbar() {
         </div>
       </motion.div>
 
-      {/* Search Modal */}
-      {isSearchOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-scrim backdrop-blur-sm">
-          <div className="mt-24 w-full max-w-md rounded-xl border border-line bg-page shadow-dialog">
-            <div className="flex items-center gap-3 border-b border-line p-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="h-5 w-5 text-subtle"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search pages, projects, or experience..."
-                className="flex-1 bg-transparent text-foreground outline-none placeholder:text-subtle"
-                autoFocus
-              />
-              <button
-                onClick={() => setIsSearchOpen(false)}
-                className="rounded border border-line px-2 py-1 text-xs text-muted transition-colors hover:border-line-strong hover:text-foreground"
-              >
-                Esc
-              </button>
-            </div>
-            <div className="max-h-96 overflow-y-auto p-2">
-              <div className="p-4 text-center text-sm text-subtle">
-                Type to search...
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {isSearchOpen && <PortfolioSearch onClose={() => setIsSearchOpen(false)} />}
     </>
   );
 }

@@ -2,9 +2,9 @@
 
 import Image from 'next/image';
 import { profile } from '@/data/profile';
-import { useEffect, useRef, type PointerEvent } from 'react';
+import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import { motion, useMotionValue, useSpring, useReducedMotion } from 'framer-motion';
-import { ArrowDownRight } from 'lucide-react';
+import { ArrowDownRight, Check, Copy, Download } from 'lucide-react';
 import { FaFacebookF, FaGithub, FaLinkedinIn } from 'react-icons/fa';
 import { IoMdMail } from 'react-icons/io';
 
@@ -16,6 +16,19 @@ export default function HeroSidebar() {
     { name: 'Flutter', logo: '/assets/logos/fluttericon.svg' },
     { name: 'React Native', logo: '/assets/logos/reacticon.svg' },
   ];
+  const [resumeActive, setResumeActive] = useState(false);
+  const [copyStatus, setCopyStatus] = useState('');
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resumeX = useSpring(0, { stiffness: 300, damping: 22 });
+  const resumeY = useSpring(0, { stiffness: 300, damping: 22 });
+  useEffect(() => () => { if (copyTimer.current) clearTimeout(copyTimer.current); }, []);
+  async function copyEmail() {
+    try { await navigator.clipboard.writeText(profile.email); setCopyStatus('Email copied'); }
+    catch { setCopyStatus('Copy unavailable. Use Get in Touch to email me.'); }
+    if (copyTimer.current) clearTimeout(copyTimer.current);
+    copyTimer.current = setTimeout(() => setCopyStatus(''), 3000);
+  }
+  function resetResume() { setResumeActive(false); resumeX.set(0); resumeY.set(0); }
   const reducedMotion = useReducedMotion();
   const portraitX = useSpring(0, { stiffness: 180, damping: 22 });
   const portraitY = useSpring(0, { stiffness: 180, damping: 22 });
@@ -76,7 +89,7 @@ export default function HeroSidebar() {
               <Image src="/assets/profile_xelpaxu.jpg" alt="Axel John Nuqui" fill sizes="104px" className="object-cover" priority />
             </motion.span>
           </span>
-          <span aria-hidden="true" className="absolute -bottom-1 -right-1 flex size-7 items-center justify-center rounded-full border border-line bg-page text-muted transition-colors group-hover:border-line-strong group-hover:text-foreground group-focus-visible:text-foreground"><ArrowDownRight className="size-3.5" /></span>
+          <span data-neko-home aria-hidden="true" className="absolute -bottom-1 -right-1 flex size-7 items-center justify-center rounded-full border border-line bg-page text-muted transition-colors group-hover:border-line-strong group-hover:text-foreground group-focus-visible:text-foreground"><ArrowDownRight className="size-3.5" /></span>
         </motion.a>
       </div>
       <div>
@@ -113,17 +126,26 @@ export default function HeroSidebar() {
 
       {/* Quick Links & Actions */}
       <div className="flex flex-col gap-4">
-        {/* Matte Black Resume Button */}
-        <a
+        <div className="flex items-center gap-2 -mt-5">
+        <motion.a
           href="/NUQUI_CV.pdf"
+          aria-label="Open Axel’s resume PDF (opens in a new tab)"
+          onPointerEnter={() => setResumeActive(true)}
+          onPointerMove={event => { if (reducedMotion || event.pointerType !== 'mouse') return; const rect = event.currentTarget.getBoundingClientRect(); resumeX.set((event.clientX - rect.left - rect.width / 2) * 0.045); resumeY.set((event.clientY - rect.top - rect.height / 2) * 0.07); }}
+          onPointerLeave={resetResume}
+          onPointerCancel={resetResume}
+          onFocus={() => setResumeActive(true)}
+          onBlur={resetResume}
+          whileTap={reducedMotion ? undefined : { scale: 0.96 }}
+          style={{ x: reducedMotion ? 0 : resumeX, y: reducedMotion ? 0 : resumeY }}
           target="_blank"
           rel="noopener noreferrer"
-          className="group inline-flex w-fit items-center gap-3 rounded-full border border-line bg-surface px-5 py-2.5 text-sm font-medium text-strong transition hover:bg-surface hover:text-foreground"
+          className="group inline-flex w-fit items-center gap-3 rounded-full border border-accent/50 bg-transparent px-5 py-2.5 text-sm font-medium text-accent transition hover:bg-surface hover:text-foreground"
         >
-          <span>Resume</span>
+          <span className="relative block h-5 w-[78px] overflow-hidden"><motion.span animate={{ y: resumeActive ? -20 : 0 }} transition={{ duration: reducedMotion ? 0 : 0.2 }} className="block"><span className="block h-5">Resume</span><span aria-hidden="true" className="block h-5">Take a look</span></motion.span></span>
           
           {/* Eyes Container */}
-          <div className="flex gap-1 bg-transparent">
+          <div aria-hidden="true" className="flex gap-1 bg-transparent" style={{ transform: resumeActive && !reducedMotion ? 'scale(1.12)' : 'scale(1)', transition: reducedMotion ? 'none' : 'transform 180ms ease' }}>
             {/* Left Eye */}
             <div 
               ref={leftEyeRef}
@@ -150,15 +172,19 @@ export default function HeroSidebar() {
               </motion.div>
             </div>
           </div>
-        </a>
+        </motion.a>
+        <motion.a href="/NUQUI_CV.pdf" download="Axel-John-Nuqui-Resume.pdf" aria-label="Download Axel’s resume PDF" title="Download resume" whileHover={reducedMotion ? undefined : { y: 2 }} whileTap={reducedMotion ? undefined : { scale: 0.9 }} className="flex size-11 items-center justify-center rounded-full border border-line text-muted transition-colors hover:border-accent hover:text-accent"><Download className="size-4" aria-hidden="true" /></motion.a>
+        </div>
 
-        {/* White Get in Touch Button */}
+        <div className="flex items-center gap-2">
         <a
           href={`mailto:${profile.email}`}
-          className="inline-flex w-fit items-center justify-center rounded-lg bg-foreground px-6 py-2 text-sm font-medium text-inverse transition hover:bg-action-hover"
+          className="inline-flex w-fit items-center justify-center rounded-lg bg-accent px-6 py-2 text-sm font-medium text-accent-ink transition hover:bg-action-hover"
         >
           Get in Touch
         </a>
+        </div>
+        <p role="status" className={copyStatus ? 'text-xs text-subtle' : 'sr-only'}>{copyStatus}</p>
 
         {/* Social Icons Array */}
         <div className="flex items-center gap-2 pt-1">
