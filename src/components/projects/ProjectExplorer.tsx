@@ -29,7 +29,7 @@ export default function ProjectExplorer() {
         <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm text-muted hover:text-foreground">More on GitHub<ArrowUpRight className="size-4" aria-hidden="true" /></a>
       </div>
       <div className="mx-auto mb-8 flex max-w-2xl flex-wrap items-center justify-center gap-2" aria-label="Filter by technology">
-        {quickTechnologies.map(tech => <button key={tech} aria-pressed={technology === tech} onClick={() => setTechnology(tech)} className={`min-h-11 px-4 py-2 text-xs font-bold ${technology === tech ? 'text-white' : 'bg-transparent text-muted hover:border-line-strong hover:text-foreground'}`}>{tech}</button>)}
+        {quickTechnologies.map(tech => <button key={tech} aria-pressed={technology === tech} onClick={() => setTechnology(tech)} className={`min-h-11 px-4 py-2 text-xs font-bold ${technology === tech ? 'text-accent border-b-2 border-accent' : 'bg-transparent text-muted hover:border-line-strong hover:text-foreground'}`}>{tech}</button>)}
         <select aria-label="More technology filters" value={quickTechnologies.includes(technology) ? '' : technology} onChange={event => { if (event.target.value) setTechnology(event.target.value); }} className="min-h-11 max-w-full bg-page px-3 text-xs text-muted">
           <option value="">More stacks</option>
           {technologies.filter(tech => !quickTechnologies.includes(tech)).map(tech => <option key={tech} value={tech}>{tech}</option>)}
@@ -41,7 +41,7 @@ export default function ProjectExplorer() {
       </div>
       <h2 className="sr-only">Project collection</h2>
       <div className="project-archive-grid grid gap-x-7 gap-y-12 sm:grid-cols-2">
-        {filtered.map(project => <ProjectPreviewCard key={project.id} project={project} />)}
+        {filtered.map(project => <ProjectPreviewCard key={project.id} project={project} showBuildDetails={false} />)}
       </div>
       {filtered.length === 0 && <div className="border-b border-line py-16 text-center"><Search className="mx-auto mb-5 size-7 text-subtle" aria-hidden="true" /><h2 className="text-lg font-medium">No matching projects</h2><p className="mt-2 text-sm text-muted">Try a different name or choose another technology.</p><button onClick={reset} className="mt-5 min-h-11 text-sm underline underline-offset-4">Reset filters</button></div>}
     </section>

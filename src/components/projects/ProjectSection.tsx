@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { projects } from '@/data/projects/projects';
 import ProjectPreviewCard from './ProjectPreviewCard';

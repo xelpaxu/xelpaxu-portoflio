@@ -120,7 +120,7 @@ export default function ProjectGallery({ title, images }: { title: string; image
         </div>}
       </div>
       {multiple && <div className="mt-4 flex gap-2 overflow-x-auto px-1 py-1" aria-label="Choose a project image">
-        {images.map((image, i) => <button key={`${i}-${image.src}`} type="button" onClick={() => goTo(i)} aria-label={`Show image ${i + 1}: ${image.caption ?? image.alt}`} aria-current={i === activeIndex ? 'true' : undefined} className={`relative h-12 w-20 shrink-0 overflow-hidden rounded-md border transition-opacity ${i === activeIndex ? 'border-foreground ring-1 ring-foreground' : 'border-line opacity-55 hover:opacity-100 focus-visible:opacity-100'}`}><Image src={image.src} alt="" fill sizes="80px" style={{ objectFit: 'contain', objectPosition: image.position ?? 'center' }} /></button>)}
+        {images.map((image, i) => <button key={`${i}-${image.src}`} type="button" onClick={() => goTo(i)} aria-label={`Show image ${i + 1}: ${image.caption ?? image.alt}`} aria-current={i === activeIndex ? 'true' : undefined} className={`relative h-12 w-20 shrink-0 overflow-hidden rounded-md border transition-opacity ${i === activeIndex ? 'border-accent ring-1 ring-accent' : 'border-line opacity-55 hover:opacity-100 focus-visible:opacity-100'}`}><Image src={image.src} alt="" fill sizes="80px" style={{ objectFit: 'contain', objectPosition: image.position ?? 'center' }} /></button>)}
       </div>}
     </section>
   );

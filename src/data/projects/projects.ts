@@ -150,7 +150,8 @@ const projectEntries: Project[] = [
     "description": "A household energy-use simulator that organizes rooms and appliances and estimates how usage choices affect consumption and electricity costs.",
     "tags": [
       "Flutter",
-      "Dart"
+      "Dart",
+      "Firebase"
     ],
     "status": "project",
     "category": "Mobile / Energy",
