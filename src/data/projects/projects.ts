@@ -300,7 +300,9 @@ const projectEntries: Project[] = [
     "description": "A Python point-of-sale application for ordering drinks, managing products, recording transactions, and reviewing sales reports.",
     "tags": [
       "Python",
-      "Flet"
+      "Flet",
+      "MySQL",
+      "MariaDB"
     ],
     "status": "project",
     "category": "Desktop / Point of sale",

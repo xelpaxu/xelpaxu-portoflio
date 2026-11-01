@@ -15,7 +15,7 @@ export default function StartupReveal() {
 
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    const ratio = 1;
     canvas.width = width * ratio;
     canvas.height = height * ratio;
     context.scale(ratio, ratio);
@@ -35,13 +35,21 @@ export default function StartupReveal() {
       }
     }
     let frame = 0;
+    let lastDraw = 0;
     let start: number | undefined;
     const finish = () => { cancelAnimationFrame(frame); canvas.hidden = true; };
     const draw = (now: number) => {
       start ??= now;
+      if (now - lastDraw < 1000 / 30) { frame = requestAnimationFrame(draw); return; }
+      lastDraw = now;
       const elapsed = now - start;
       context.clearRect(0, 0, width, height);
+      // Cover untouched rows in one draw instead of painting thousands of cells.
+      const frontier = Math.min(height, Math.ceil(elapsed / sweepDuration * height / size) * size);
+      context.fillStyle = background;
+      context.fillRect(0, frontier, width, height - frontier);
       for (const cell of cells) {
+        if (cell.y >= frontier) break;
         const progress = Math.max(0, Math.min(1, (elapsed - cell.start) / tileDuration));
         if (progress === 1) continue;
         context.fillStyle = background;

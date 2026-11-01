@@ -37,7 +37,7 @@ export default function Navbar() {
     };
 
     handleScroll(); // run once in case page loads already scrolled
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 

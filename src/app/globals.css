@@ -123,6 +123,9 @@ body { isolation: isolate; }
   .startup-reveal { display: none; }
 }
 html { scroll-behavior: smooth; }
+html.lenis { height: auto; scroll-behavior: auto; }
+.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
 .home-sidebar { margin-bottom: 3rem; }
 @media (min-width: 1024px) {
   .home-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 4rem; }
@@ -255,6 +258,7 @@ html[data-theme-transition] {
 ::view-transition { pointer-events: none; }
 button { cursor: pointer; }
 input[type="search"]::-webkit-search-cancel-button { display: none; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }

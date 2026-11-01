@@ -1,7 +1,7 @@
 /** Cyclic depth ordering: the selected card faces forward; the others fan behind it. */
 export function getStackPose(imageIndex: number, selected: number, count: number) {
   const rank = ((imageIndex - selected) % count + count) % count;
-  if (!rank) return { x: '0%', y: 0, z: 80, scale: 1, rotateY: 0, rotateZ: 0 };
+  if (!rank) return { x: '0%', y: 0, z: 0, scale: 1, rotateY: 0, rotateZ: 0 };
   const side = rank % 2 ? 1 : -1;
   const layer = Math.ceil(rank / 2);
   return {

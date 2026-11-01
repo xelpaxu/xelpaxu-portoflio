@@ -28,7 +28,7 @@ export default function PortfolioSearch({ onClose }: { onClose: () => void }) {
   }, []);
   useEffect(() => { resultLinks.current[activeIndex]?.scrollIntoView({ block: 'nearest' }); }, [activeIndex, query]);
 
-  return <dialog ref={dialog} aria-labelledby={`${id}-title`} onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => { if (event.currentTarget === event.target) onClose(); }} className="fixed inset-x-0 top-[12dvh] m-0 mx-auto max-h-[76dvh] w-[calc(100%_-_2rem)] max-w-xl overflow-hidden rounded-2xl border border-line bg-surface p-0 text-foreground shadow-dialog backdrop:bg-scrim backdrop:backdrop-blur-sm">
+  return <dialog data-lenis-prevent ref={dialog} aria-labelledby={`${id}-title`} onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => { if (event.currentTarget === event.target) onClose(); }} className="fixed inset-x-0 top-[12dvh] m-0 mx-auto max-h-[76dvh] w-[calc(100%_-_2rem)] max-w-xl overflow-hidden rounded-2xl border border-line bg-surface p-0 text-foreground shadow-dialog backdrop:bg-scrim backdrop:backdrop-blur-sm">
     <div>
       <h2 id={`${id}-title`} className="sr-only">Search the portfolio</h2>
       <div className="flex items-center gap-3 border-b border-line px-4 py-3">

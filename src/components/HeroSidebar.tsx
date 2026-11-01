@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { profile } from '@/data/profile';
 import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import { motion, useMotionValue, useSpring, useReducedMotion } from 'framer-motion';
-import { ArrowDownRight, Check, Copy, Download } from 'lucide-react';
+import { ArrowDownRight, Download } from 'lucide-react';
 import { FaFacebookF, FaGithub, FaLinkedinIn } from 'react-icons/fa';
 import { IoMdMail } from 'react-icons/io';
 
@@ -17,17 +17,8 @@ export default function HeroSidebar() {
     { name: 'React Native', logo: '/assets/logos/reacticon.svg' },
   ];
   const [resumeActive, setResumeActive] = useState(false);
-  const [copyStatus, setCopyStatus] = useState('');
-  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resumeX = useSpring(0, { stiffness: 300, damping: 22 });
   const resumeY = useSpring(0, { stiffness: 300, damping: 22 });
-  useEffect(() => () => { if (copyTimer.current) clearTimeout(copyTimer.current); }, []);
-  async function copyEmail() {
-    try { await navigator.clipboard.writeText(profile.email); setCopyStatus('Email copied'); }
-    catch { setCopyStatus('Copy unavailable. Use Get in Touch to email me.'); }
-    if (copyTimer.current) clearTimeout(copyTimer.current);
-    copyTimer.current = setTimeout(() => setCopyStatus(''), 3000);
-  }
   function resetResume() { setResumeActive(false); resumeX.set(0); resumeY.set(0); }
   const reducedMotion = useReducedMotion();
   const portraitX = useSpring(0, { stiffness: 180, damping: 22 });
@@ -103,7 +94,7 @@ export default function HeroSidebar() {
         I&apos;m building web and mobile applications using{" "}
         {technologies.map((tech, index) => (
           <span key={tech.name}>
-            <span className="inline-flex items-center gap-1.5 rounded-[0.5rem] border border-dashed border-line-strong bg-surface-raised backdrop-blur-xl px-2.5 py-[0.2rem] text-sm text-strong transition-all hover:scale-105 hover:border-line-strong hover:bg-foreground/20">
+            <span className="inline-flex items-center gap-1.5 rounded-[0.5rem] border border-dashed border-line-strong bg-surface-raised px-2.5 py-[0.2rem] text-sm text-strong transition-all hover:scale-105 hover:border-line-strong hover:bg-foreground/20">
               <span className="relative h-4 w-4 inline-block">
                 <Image
                   src={tech.logo}
@@ -184,7 +175,6 @@ export default function HeroSidebar() {
           Get in Touch
         </a>
         </div>
-        <p role="status" className={copyStatus ? 'text-xs text-subtle' : 'sr-only'}>{copyStatus}</p>
 
         {/* Social Icons Array */}
         <div className="flex items-center gap-2 pt-1">

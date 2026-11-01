@@ -4,6 +4,9 @@ import "./globals.css";
 import { ThemeProvider } from '@/components/ThemeProvider';
 import NekoCompanion from '@/components/NekoCompanion';
 import StartupReveal from '@/components/StartupReveal';
+import SmoothScrolling from '@/components/SmoothScrolling';
+import { ShaderBackground } from '@/components/ShaderBackground';
+import { GrainOverlay } from '@/components/GrainOverlay';
 
 const hankenGrotesk = localFont({
   src: "./fonts/hanken-grotesk-latin.woff2",
@@ -30,7 +33,7 @@ export default function RootLayout({
       <body
         className={`${hankenGrotesk.className} ${hankenGrotesk.variable} bg-page text-foreground antialiased`}
       >
-          <ThemeProvider>{children}<NekoCompanion /></ThemeProvider>
+          <ThemeProvider><SmoothScrolling /><ShaderBackground /><GrainOverlay />{children}<NekoCompanion /></ThemeProvider>
           <StartupReveal />
       </body>
     </html>
