@@ -4,7 +4,8 @@ import { useEffect, useRef } from 'react';
 import { createNeko, NEKO_SIZE, parkNeko, resizeNeko, stepNeko, targetNeko } from '@/lib/neko';
 
 export default function NekoCompanion() {
-  const sprite = useRef<HTMLDivElement>(null);
+  const sprite = useRef<HTMLButtonElement>(null);
+  const bubble = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const element = sprite.current;
@@ -21,6 +22,28 @@ export default function NekoCompanion() {
     const image = new window.Image();
     let imageReady = false;
     let hasFollowedPointer = false;
+    let hovered = false;
+    let focused = false;
+    let reactionUntil = 0;
+    let reactionIndex = 0;
+    let dismissed = false;
+    const reactions = ['meow! ♡', 'purr... ♡', 'meow meow!'];
+
+    const onEnter = () => { hovered = true; dismissed = false; parkNeko(cat, performance.now()); };
+    const onExit = () => { hovered = false; if (!focused) parkNeko(cat, performance.now()); };
+    const onFocus = () => { focused = true; dismissed = false; parkNeko(cat, performance.now()); };
+    const onBlur = () => { focused = false; if (!hovered) parkNeko(cat, performance.now()); };
+    const onPet = () => {
+      const now = performance.now();
+      parkNeko(cat, now);
+      cat.wakeUntil = now + 700;
+      reactionUntil = now + 1800;
+      dismissed = false;
+      if (bubble.current) bubble.current.textContent = reactions[reactionIndex++ % reactions.length];
+    };
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { dismissed = true; reactionUntil = 0; }
+    };
 
     function placeBesideProfile() {
       if (hasFollowedPointer) return;
@@ -42,7 +65,25 @@ export default function NekoCompanion() {
       if (lastTime && now - lastTime < 100) { frame = requestAnimationFrame(animate); return; }
       const delta = lastTime ? (now - lastTime) / 1000 : 0;
       lastTime = now;
+      if ((hovered || focused) && now >= reactionUntil) {
+        // Hold the existing yawn frame while the cat greets its visitor.
+        cat.targetX = cat.x; cat.targetY = cat.y;
+        cat.idleSince = now - 4400;
+      }
       const cell = stepNeko(cat, now, delta);
+      const message = bubble.current;
+      if (message) {
+        const reacting = now < reactionUntil;
+        const visible = !dismissed && (hovered || focused || reacting);
+        message.hidden = !visible;
+        if (visible) {
+          if (!reacting && message.textContent !== 'meowww') message.textContent = 'meowww';
+          const center = Math.max(64, Math.min(cat.x, window.innerWidth - 64));
+          message.style.left = `${center - cat.x + NEKO_SIZE / 2}px`;
+          message.style.top = cat.y < 64 ? '40px' : '-36px';
+          message.dataset.below = String(cat.y < 64);
+        }
+      }
       const nextCell = `${-cell[0] * NEKO_SIZE}px ${-cell[1] * NEKO_SIZE}px`;
       if (nextCell !== previousCell) { element!.style.backgroundPosition = nextCell; previousCell = nextCell; }
       const position = `translate3d(${Math.round(cat.x - NEKO_SIZE / 2)}px, ${Math.round(cat.y - NEKO_SIZE / 2)}px, 0)`;
@@ -58,6 +99,7 @@ export default function NekoCompanion() {
     }
     const onPointer = (event: PointerEvent) => {
       if (event.pointerType !== 'mouse' || !canAnimate()) return;
+      if (hovered || focused || performance.now() < reactionUntil) return;
       hasFollowedPointer = true;
       targetNeko(cat, event.clientX, event.clientY, window.innerWidth, window.innerHeight, performance.now());
     };
@@ -75,6 +117,12 @@ export default function NekoCompanion() {
     try { enabled = localStorage.getItem('portfolio-neko') !== 'off'; } catch { /* Optional persistence. */ }
     image.onload = () => { if (!disposed) { imageReady = true; placeBesideProfile(); sync(); } };
     image.src = '/assets/neko/neko.png';
+    element.addEventListener('pointerenter', onEnter);
+    element.addEventListener('pointerleave', onExit);
+    element.addEventListener('focus', onFocus);
+    element.addEventListener('blur', onBlur);
+    element.addEventListener('click', onPet);
+    window.addEventListener('keydown', onEscape);
     sync();
     window.addEventListener('pointermove', onPointer, { passive: true });
     document.documentElement.addEventListener('pointerleave', onLeave);
@@ -89,6 +137,12 @@ export default function NekoCompanion() {
       disposed = true;
       cancelAnimationFrame(frame);
       image.onload = null;
+      element.removeEventListener('pointerenter', onEnter);
+      element.removeEventListener('pointerleave', onExit);
+      element.removeEventListener('focus', onFocus);
+      element.removeEventListener('blur', onBlur);
+      element.removeEventListener('click', onPet);
+      window.removeEventListener('keydown', onEscape);
       window.removeEventListener('pointermove', onPointer);
       document.documentElement.removeEventListener('pointerleave', onLeave);
       window.removeEventListener('blur', onLeave);
@@ -101,5 +155,7 @@ export default function NekoCompanion() {
     };
   }, []);
 
-  return <div ref={sprite} id="neko-companion" aria-hidden="true" className="pointer-events-none fixed left-0 top-0 z-[90] hidden select-none" style={{ width: NEKO_SIZE, height: NEKO_SIZE, backgroundImage: 'url(/assets/neko/neko.png)', backgroundSize: `${NEKO_SIZE * 8}px ${NEKO_SIZE * 4}px`, backgroundRepeat: 'no-repeat', imageRendering: 'pixelated', willChange: 'transform', filter: 'drop-shadow(0 1px 1px rgb(0 0 0 / 25%))' }} />;
+  return <button ref={sprite} type="button" id="neko-companion" aria-label="Pet the cat" className="fixed left-0 top-0 z-[90] hidden cursor-pointer select-none border-0 bg-transparent p-0" style={{ width: NEKO_SIZE, height: NEKO_SIZE, backgroundImage: 'url(/assets/neko/neko.png)', backgroundSize: `${NEKO_SIZE * 8}px ${NEKO_SIZE * 4}px`, backgroundRepeat: 'no-repeat', imageRendering: 'pixelated', willChange: 'transform', filter: 'drop-shadow(0 1px 1px rgb(0 0 0 / 25%))' }}>
+    <span ref={bubble} hidden role="status" aria-live="polite" className="neko-bubble pointer-events-none absolute -translate-x-1/2 whitespace-nowrap rounded-xl border border-line bg-surface px-3 py-1.5 text-xs font-medium leading-5 text-strong" style={{ imageRendering: 'auto' }} />
+  </button>;
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { workExperiences } from '@/data/experience/work-experience';
 import PageHeader from '@/components/PageHeader';
 import RouteShell from '@/components/RouteShell';
 import ExperienceArchive from '@/components/experience/ExperienceArchive';
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 };
 export default function ExperiencePage() {
   return <RouteShell>
-    <PageHeader title="Experience" description="Frontend, full-stack, and product development. The teams I have worked with and what I contributed along the way." />
+    <PageHeader title="Experience" description={workExperiences.length ? "Frontend, full-stack, and product development. The teams I have worked with and what I contributed along the way." : "Learning, growing, and looking ahead to new opportunities."} />
     <ExperienceArchive />
   </RouteShell>;
 }

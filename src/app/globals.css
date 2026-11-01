@@ -88,6 +88,40 @@ html[data-theme="light"] {
   font-family: 'Clash Display', system-ui, -apple-system, sans-serif;
 }
 body { isolation: isolate; }
+
+.neko-bubble::after {
+  content: '';
+  position: absolute;
+  left: calc(50% - 3px);
+  bottom: -4px;
+  width: 6px;
+  height: 6px;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  transform: rotate(45deg);
+}
+.neko-bubble[data-below="true"]::after {
+  top: -4px;
+  bottom: auto;
+  transform: rotate(225deg);
+}
+
+.startup-reveal {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+  background: var(--page);
+  animation: startup-reveal-failsafe 4.5s step-end forwards;
+}
+.startup-reveal[hidden] { display: none; }
+@keyframes startup-reveal-failsafe { to { visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) {
+  .startup-reveal { display: none; }
+}
 html { scroll-behavior: smooth; }
 .home-sidebar { margin-bottom: 3rem; }
 @media (min-width: 1024px) {
@@ -173,7 +207,8 @@ html[data-accent="default"][data-theme="light"] {
 .experience-timeline > *::before { border-color: var(--accent); }
 html, body { background-color: var(--page); color: var(--foreground); }
 ::selection { background: var(--accent); color: var(--accent-ink); }
-:where(a, button, input, summary):focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+:where(a, button, input, select, textarea, summary):focus:not(:focus-visible) { outline: none; }
+:where(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid var(--muted); outline-offset: 4px; }
 
 /* Only run the coordinated color fade after a deliberate theme change. */
 html[data-theme-transition] *,

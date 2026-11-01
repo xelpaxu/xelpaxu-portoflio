@@ -1,3 +1,4 @@
+import PortfolioEmptyState from '@/components/PortfolioEmptyState';
 ﻿import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { projects } from '@/data/projects/projects';
@@ -6,6 +7,7 @@ import ProjectPreviewCard from './ProjectPreviewCard';
 export default function ProjectsSection() {
   const featured = projects.filter(project => project.featured);
   const selected = featured.length ? featured : projects.slice(0, 3);
+  if (projects.length === 0) return <PortfolioEmptyState kind="projects" />;
   return (
     <div>
       <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2">

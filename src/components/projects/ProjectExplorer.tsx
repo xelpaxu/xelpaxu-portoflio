@@ -1,5 +1,7 @@
 'use client';
 
+import PortfolioEmptyState from '@/components/PortfolioEmptyState';
+
 import { useState } from 'react';
 import { Search, X, ArrowUpRight } from 'lucide-react';
 import ProjectPreviewCard from './ProjectPreviewCard';
@@ -18,12 +20,13 @@ export default function ProjectExplorer() {
     [project.title, project.description, ...project.tags.map(normalize)].join(' ').toLowerCase().includes(query.trim().toLowerCase())
   );
   const reset = () => { setQuery(''); setTechnology('All'); };
+  if (projects.length === 0) return <section aria-label="Browse projects" className="mx-auto max-w-4xl"><PortfolioEmptyState kind="projects" /></section>;
   return (
     <section aria-label="Browse projects" className="mx-auto max-w-4xl">
       <div className="mb-7 flex flex-col items-center gap-4">
-        <div className="relative w-full max-w-md">
-          <Search aria-hidden="true" className="absolute left-4 top-4 size-4 text-subtle" />
-          <input aria-label="Search projects" type="search" placeholder="Find a project or technology" value={query} onChange={event => setQuery(event.target.value)} className="min-h-12 w-full rounded-full border border-line bg-transparent py-3 pl-11 pr-12 text-sm text-foreground transition-colors placeholder:text-subtle hover:border-line-strong" />
+        <div className="relative w-full max-w-md border-b border-line transition-colors focus-within:border-line-strong">
+          <Search aria-hidden="true" className="absolute left-1 top-3.5 size-4 text-subtle" />
+          <input aria-label="Search projects" type="search" placeholder="Find a project or technology" value={query} onChange={event => setQuery(event.target.value)} className="min-h-11 w-full bg-transparent py-3 pl-8 pr-12 text-sm text-foreground placeholder:text-subtle focus-visible:outline-none" />
           {query && <button aria-label="Clear search" onClick={() => setQuery('')} className="absolute right-0 top-0 flex size-11 items-center justify-center text-muted hover:text-foreground"><X className="size-4" /></button>}
         </div>
         <a href={`https://github.com/${profile.github}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm text-muted hover:text-foreground">More on GitHub<ArrowUpRight className="size-4" aria-hidden="true" /></a>

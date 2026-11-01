@@ -1,7 +1,7 @@
 // data/experience/work-experience.ts
 import { Experience } from "@/types/experience";
 
-export const workExperiences: Experience[] = [
+export const workExperiencess: Experience[] = [
   {
     id: "mit-app-invention",
     logo: "/assets/logos/ixl.png",
@@ -51,3 +51,5 @@ export const workExperiences: Experience[] = [
     ]
   }
 ];
+
+export const workExperiences: Experience[] = [];

@@ -1,5 +1,7 @@
 "use client";
 
+import PortfolioEmptyState from '@/components/PortfolioEmptyState';
+
 import Link from "next/link";
 
 import { useState } from 'react';
@@ -43,12 +45,13 @@ export default function ExperienceSection({ showAll = false }: { showAll?: boole
             Experience
           </button>
         </div>
-        {activeTab === 'experience' && <button type="button" onClick={() => setExpandedRoles(featuredExperiences.every(role => expandedRoles.includes(role.id)) ? [] : featuredExperiences.map(role => role.id))} className="min-h-11 text-xs text-accent hover:underline">{featuredExperiences.every(role => expandedRoles.includes(role.id)) ? 'Collapse all' : 'Expand all'}</button>}
+        {activeTab === 'experience' && featuredExperiences.length > 0 && <button type="button" onClick={() => setExpandedRoles(featuredExperiences.every(role => expandedRoles.includes(role.id)) ? [] : featuredExperiences.map(role => role.id))} className="min-h-11 text-xs text-accent hover:underline">{featuredExperiences.every(role => expandedRoles.includes(role.id)) ? 'Collapse all' : 'Expand all'}</button>}
       </div>
 
       {/* Experience List - Only 3 items */}
       {activeTab === 'experience' && (
         <>
+          {featuredExperiences.length === 0 && <PortfolioEmptyState kind="experience" />}
           <div className="experience-timeline flex flex-col">
             {featuredExperiences.map((experience) => (
               <FeaturedExperience key={experience.id} {...experience} card={showAll} expanded={expandedRoles.includes(experience.id)} onToggle={() => setExpandedRoles(previous => previous.includes(experience.id) ? previous.filter(id => id !== experience.id) : [...previous, experience.id])} />
@@ -56,7 +59,7 @@ export default function ExperienceSection({ showAll = false }: { showAll?: boole
           </div>
 
           {/* Only show View All link if there are more than 3 experiences */}
-          {!showAll && (
+          {!showAll && orderedExperiences.length > 3 && (
             <div className="mt-8">
               <Link
                 href="/experience"

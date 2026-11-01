@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from '@/components/ThemeProvider';
 import NekoCompanion from '@/components/NekoCompanion';
+import StartupReveal from '@/components/StartupReveal';
 
 const hankenGrotesk = localFont({
   src: "./fonts/hanken-grotesk-latin.woff2",
@@ -30,6 +31,7 @@ export default function RootLayout({
         className={`${hankenGrotesk.className} ${hankenGrotesk.variable} bg-page text-foreground antialiased`}
       >
           <ThemeProvider>{children}<NekoCompanion /></ThemeProvider>
+          <StartupReveal />
       </body>
     </html>
   );

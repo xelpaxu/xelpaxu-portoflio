@@ -1,3 +1,4 @@
+import PortfolioEmptyState from '@/components/PortfolioEmptyState';
 import Image from 'next/image';
 import Link from 'next/link';
 import { existsSync } from 'node:fs';
@@ -20,7 +21,7 @@ export default function ExperienceArchive() {
       </nav>
       <section id="work-history" aria-labelledby="work-heading" className="scroll-mt-28">
         <h2 id="work-heading" className="sr-only">Work experience</h2>
-        <ol className="divide-y divide-line border-y border-line">
+        {roles.length === 0 ? <PortfolioEmptyState kind="experience" /> : <ol className="divide-y divide-line border-y border-line">
           {roles.map(role => {
             const hasLogo = role.logo.startsWith('/') && existsSync(path.join(process.cwd(), 'public', role.logo));
             const initials = role.title.split(' ').slice(0, 2).map(word => word[0]).join('');
@@ -45,7 +46,7 @@ export default function ExperienceArchive() {
               </article>
             </li>;
           })}
-        </ol>
+        </ol>}
       </section>
       <section id="learning-journey" aria-labelledby="journey-heading" className="mt-16 scroll-mt-28 sm:mt-20">
         <div className="mb-7 text-center"><h2 id="journey-heading" className="text-2xl font-semibold tracking-tight">Learning journey</h2><p className="mt-2 text-sm text-muted">A few of the steps that brought me here.</p></div>
