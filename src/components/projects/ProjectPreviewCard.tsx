@@ -52,7 +52,6 @@ export default function ProjectPreviewCard({ project, iconOnly = false, showBuil
       <div className="mt-5 border-t border-line pt-4"><TechStack tags={project.tags} iconOnly={iconOnly} /></div>
       <LikeButton projectId={project.id} title={project.title} />
       {showBuildDetails && !!highlights.length && <div className="mt-2">
-        <button type="button" onClick={() => setPeek(!peek)} aria-expanded={peek} aria-controls={`${project.id}-peek`} className="flex min-h-11 w-full items-center justify-between gap-3 text-left text-xs text-muted hover:text-accent">Behind the build<ChevronDown className={`size-4 transition-transform ${peek ? 'rotate-180' : ''}`} aria-hidden="true" /></button>
         <AnimatePresence initial={false}>{peek && <motion.div id={`${project.id}-peek`} initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: reducedMotion ? 0 : 0.22 }} className="overflow-hidden"><ul className="space-y-3 pb-3 pt-2">{highlights.map(feature => <li key={feature.title} className="border-l-2 border-accent/40 pl-3"><p className="text-xs font-medium text-strong">{feature.title}</p><p className="mt-1 text-xs leading-5 text-muted">{feature.description}</p></li>)}</ul></motion.div>}</AnimatePresence>
       </div>}
     </article>
