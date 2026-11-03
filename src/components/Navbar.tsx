@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Moon, Sun } from 'lucide-react';
+import { BriefcaseBusiness, Folder, Moon, Sun } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import AccentPicker from './AccentPicker';
 import PortfolioSearch from './PortfolioSearch';
@@ -46,6 +46,7 @@ export default function Navbar() {
     if (pathname === '/') return 'profile';
     if (pathname.startsWith('/experience')) return 'experience';
     if (pathname.startsWith('/projects')) return 'projects';
+    if (pathname.startsWith('/blog')) return 'blog';
     return 'profile';
   };
 
@@ -79,31 +80,36 @@ export default function Navbar() {
                 />
               </div>
               <span className="hidden text-base font-bold text-foreground transition-all duration-300 hover:brightness-75 sm:inline-block">
-                xelpaxu | Axel
+                xelpaxu
               </span>
             </Link>
 
             <Link
               href="/experience"
-              className={`rounded-full px-2 py-1.5 text-xs font-medium transition-all duration-300 md:px-3 md:text-base ${
+              aria-label="Experience"
+              title="Experience"
+              className={`inline-flex min-h-11 items-center rounded-full px-2 py-1.5 text-xs font-medium transition-all duration-300 md:px-3 md:text-base ${
                 activeSection === 'experience'
                   ? 'text-accent'
                   : 'text-muted hover:text-foreground'
               }`}
             >
-              Experience
+              <BriefcaseBusiness className="size-4 min-[400px]:hidden" aria-hidden="true" /><span className="hidden min-[400px]:inline">Experience</span>
             </Link>
 
             <Link
               href="/projects"
-              className={`rounded-full px-2 py-1.5 text-xs font-medium transition-all duration-300 md:px-3 md:text-base ${
+              aria-label="Projects"
+              title="Projects"
+              className={`inline-flex min-h-11 items-center rounded-full px-2 py-1.5 text-xs font-medium transition-all duration-300 md:px-3 md:text-base ${
                 activeSection === 'projects'
                   ? 'text-accent'
                   : 'text-muted hover:text-foreground'
               }`}
             >
-              Projects
+              <Folder className="size-4 min-[400px]:hidden" aria-hidden="true" /><span className="hidden min-[400px]:inline">Projects</span>
             </Link>
+            <Link href="/blog" aria-current={activeSection === 'blog' ? 'page' : undefined} className={`inline-flex min-h-11 items-center rounded-full px-2 py-1.5 text-xs font-medium transition-all duration-300 md:px-3 md:text-base ${activeSection === 'blog' ? 'text-accent' : 'text-muted hover:text-foreground'}`}>Blog</Link>
           </div>
 
           {/* Right group - Search */}

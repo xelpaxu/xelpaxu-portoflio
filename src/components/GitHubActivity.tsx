@@ -5,8 +5,8 @@ import { ArrowUpRight, GitFork, Star } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa';
 import { profile } from '@/data/profile';
 import type { GitHubActivity as Activity } from '@/types/github';
+import ContributionCalendar from './ContributionCalendar';
 import LiveVisits from './LiveVisits';
-import { getActivityHighlights } from '@/lib/activity-highlights';
 
 const levels = ['var(--activity-0)', 'var(--activity-1)', 'var(--activity-2)', 'var(--activity-3)', 'var(--activity-4)'];
 
@@ -15,7 +15,6 @@ export default function GitHubActivity() {
   const [failed, setFailed] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState('all');
   const [selectedDate, setSelectedDate] = useState('');
-  const [lens, setLens] = useState<'all' | 'streak' | 'busiest'>('all');
   useEffect(() => {
     const controller = new AbortController();
     fetch('/api/github', { signal: controller.signal })
@@ -31,12 +30,9 @@ export default function GitHubActivity() {
   const pastDays = days.filter(day => day.date <= today);
   const monthOptions = [...new Set(pastDays.map(day => day.date.slice(0, 7)))];
   const inspectableDays = pastDays.filter(day => selectedMonth === 'all' || day.date.startsWith(selectedMonth));
-  const selectedIndex = Math.max(0, inspectableDays.findIndex(day => day.date === selectedDate));
-  const inspectedDay = inspectableDays[selectedIndex];
+  const inspectedDay = inspectableDays.find(day => day.date === selectedDate);
   const activityLabels = ['No', 'Low', 'Moderate', 'High', 'Very high'];
   const activeDays = pastDays.filter(day => day.level > 0).length;
-  const highlights = getActivityHighlights(pastDays);
-  const streakDates = new Set(highlights.longest);
   let bestStreak = 0;
   let streak = 0;
   for (const day of pastDays) { streak = day.level ? streak + 1 : 0; bestStreak = Math.max(bestStreak, streak); }
@@ -66,34 +62,20 @@ export default function GitHubActivity() {
               <p><span className="text-2xl font-semibold tracking-tight text-accent">{activeDays}</span><span className="ml-2 text-sm text-muted">active days</span></p>
               <p className="text-sm text-muted">Longest streak <span className="ml-1 font-medium text-foreground">{bestStreak} days</span></p>
             </div>
-            <div className="mb-5 flex flex-wrap gap-2" role="group" aria-label="Discover GitHub activity patterns">
-              <button type="button" aria-pressed={lens === 'streak'} disabled={!highlights.longest.length} onClick={() => { setLens(lens === 'streak' ? 'all' : 'streak'); setSelectedMonth('all'); setSelectedDate(highlights.longest[0]); }} className={`min-h-11 rounded-full border px-4 text-xs transition-colors disabled:opacity-40 ${lens === 'streak' ? 'border-accent text-accent' : 'border-line text-muted hover:border-accent/50'}`}>Find my longest streak</button>
-              <button type="button" aria-pressed={lens === 'busiest'} disabled={!highlights.busiestMonth} onClick={() => { const next = lens === 'busiest' ? 'all' : 'busiest'; setLens(next); setSelectedMonth(next === 'all' ? 'all' : highlights.busiestMonth); setSelectedDate(''); }} className={`min-h-11 rounded-full border px-4 text-xs transition-colors disabled:opacity-40 ${lens === 'busiest' ? 'border-accent text-accent' : 'border-line text-muted hover:border-accent/50'}`}>Find my busiest month</button>
-            </div>
-            {lens !== 'all' && <p role="status" className="mb-5 border-l-2 border-accent pl-4 text-sm leading-6 text-strong">{lens === 'streak' ? `${highlights.longest.length} consecutive active days, ${highlights.longest[0]} to ${highlights.longest.at(-1)}. Follow the highlighted trail below.` : `${new Date(`${highlights.busiestMonth}-01T12:00:00Z`).toLocaleDateString('en', { month: 'long', year: 'numeric', timeZone: 'UTC' })}: ${highlights.busiestActiveDays} active days. My busiest month by active days.`}</p>}
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <p className="text-xs text-muted">Hover or tap a day to explore.</p>
               <label className="flex items-center gap-2 text-xs text-muted">Highlight
-                <select value={selectedMonth} onChange={event => { setSelectedMonth(event.target.value); setSelectedDate(''); setLens('all'); }} className="min-h-11 max-w-full rounded-lg border border-line bg-transparent px-3 text-foreground">
+                <select value={selectedMonth} onChange={event => { setSelectedMonth(event.target.value); setSelectedDate(''); }} className="min-h-11 max-w-full rounded-lg border border-line bg-transparent px-3 text-foreground">
                   <option value="all" className="bg-page">Past year</option>
                   {monthOptions.map(month => <option key={month} value={month} className="bg-page">{new Date(`${month}-01T12:00:00Z`).toLocaleDateString('en', { month: 'long', year: 'numeric', timeZone: 'UTC' })}</option>)}
                 </select>
               </label>
             </div>
-            <div className="overflow-x-auto pb-2" tabIndex={0} role="region" aria-label="Scrollable contribution calendar">
-              <svg viewBox={`0 0 ${weeks * 13 + 26} 111`} className="w-full min-w-[560px]" role="img" aria-label={`${activeDays} active days in the past year. Longest contribution streak: ${bestStreak} days.`}>
-                {months.map(month => <text key={`${month.week}-${month.label}`} x={month.week * 13 + 26} y={10} className="fill-subtle text-[9px]">{month.label}</text>)}
-                {['Mon', 'Wed', 'Fri'].map((label, i) => <text key={label} x={0} y={35 + i * 26} className="fill-subtle text-[8px]">{label}</text>)}
-                {days.map((day, i) => <rect key={day.date} x={Math.floor((i + offset) / 7) * 13 + 26} y={(i + offset) % 7 * 13 + 20} width={10} height={10} rx={2.5} fill={levels[day.level]} opacity={(lens === 'streak' ? streakDates.has(day.date) : selectedMonth === 'all' || day.date.startsWith(selectedMonth)) ? 1 : 0.12} stroke={inspectedDay?.date === day.date ? 'var(--foreground)' : 'none'} strokeWidth={1.5} className="cursor-crosshair transition-opacity" onPointerEnter={() => { if (day.date <= today && (selectedMonth === 'all' || day.date.startsWith(selectedMonth))) setSelectedDate(day.date); }} onClick={() => { if (day.date <= today && (selectedMonth === 'all' || day.date.startsWith(selectedMonth))) setSelectedDate(day.date); }}><title>{day.date}: {activityLabels[day.level]} contribution activity</title></rect>)}
-              </svg>
-            </div>
+            <ContributionCalendar days={days} offset={offset} weeks={weeks} months={months} inspectedDate={inspectedDay?.date} highlightedDates={new Set(days.filter(day => day.date <= today && (selectedMonth === 'all' || day.date.startsWith(selectedMonth))).map(day => day.date))} onSelect={date => { if (date <= today && (selectedMonth === 'all' || date.startsWith(selectedMonth))) setSelectedDate(date); }} />
             <div className="mt-3 flex items-center justify-between gap-3 text-xs text-subtle"><span>Past year · Public GitHub activity</span><span className="flex items-center gap-1.5">Less{levels.map(color => <span key={color} className="size-2.5 rounded-[3px]" style={{ background: color }} />)}More</span></div>
-            {inspectedDay && <div className="mt-5 border-t border-line pt-4">
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs"><span className="text-strong">{new Date(`${inspectedDay.date}T12:00:00Z`).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}</span><span className="flex items-center gap-2 text-muted"><span className="size-2 rounded-full" style={{ background: levels[inspectedDay.level] }} />{activityLabels[inspectedDay.level]} activity</span></div>
-              <label className="block text-xs text-subtle">Scrub through the days
-                <input type="range" min={0} max={Math.max(0, inspectableDays.length - 1)} value={selectedIndex} onChange={event => setSelectedDate(inspectableDays[Number(event.target.value)].date)} aria-valuetext={`${inspectedDay.date}: ${activityLabels[inspectedDay.level]} activity`} className="mt-1 block h-11 w-full cursor-ew-resize" style={{ accentColor: 'var(--accent)' }} />
-              </label>
-            </div>}
+            <div className="mt-4 flex min-h-11 flex-wrap items-center justify-between gap-2 border-t border-line pt-3 text-xs">
+              {inspectedDay ? <><span className="text-strong">{new Date(`${inspectedDay.date}T12:00:00Z`).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}</span><span className="flex items-center gap-2 text-muted"><span className="size-2 rounded-full" style={{ background: levels[inspectedDay.level] }} />{activityLabels[inspectedDay.level]} activity</span></> : <span className="text-subtle">Hover or tap a contribution to see its activity.</span>}
+            </div>
           </>
         ) : <p role="status" className="py-8 text-center text-sm text-muted">Activity is temporarily unavailable. <a className="underline underline-offset-4" href={`https://github.com/${profile.github}`}>View it on GitHub</a>.</p>}
       </div>

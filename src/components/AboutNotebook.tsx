@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight, CornerDownLeft, MessageCircle, RotateCcw } from 'lucide-react';
 import { profile } from '@/data/profile';
+import AboutLikeButton from '@/components/AboutLikeButton';
 
 const questions = [
   {
@@ -90,6 +91,7 @@ export default function AboutNotebook() {
           </div>
         </div>
       </div>
+      <AboutLikeButton />
     </div>
   );
 }

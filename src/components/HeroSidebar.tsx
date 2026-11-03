@@ -1,10 +1,11 @@
 "use client";
 
 import Image from 'next/image';
+import PokeButton from '@/components/PokeButton';
 import { profile } from '@/data/profile';
 import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import { motion, useMotionValue, useSpring, useReducedMotion } from 'framer-motion';
-import { ArrowDownRight, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { FaFacebookF, FaGithub, FaLinkedinIn } from 'react-icons/fa';
 import { IoMdMail } from 'react-icons/io';
 
@@ -63,7 +64,8 @@ export default function HeroSidebar() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-center lg:justify-start">
+      <div className="flex items-center justify-center gap-5 lg:justify-start">
+        <PokeButton>
         <motion.a
           href="#about"
           aria-label="Get to know Axel"
@@ -73,15 +75,16 @@ export default function HeroSidebar() {
           onPointerCancel={resetPortrait}
           onBlur={resetPortrait}
           whileTap={reducedMotion ? undefined : { scale: 0.97 }}
-          className="group relative block size-24 rounded-full ring-1 ring-line ring-offset-4 ring-offset-page transition-[box-shadow] hover:ring-line-strong focus-visible:ring-line-strong"
+          className="group relative block size-24 shrink-0 rounded-full ring-1 ring-line ring-offset-4 ring-offset-page transition-[box-shadow] hover:ring-line-strong focus-visible:ring-line-strong"
         >
           <span className="absolute inset-0 overflow-hidden rounded-full">
             <motion.span className="absolute -inset-1" style={{ x: reducedMotion ? 0 : portraitX, y: reducedMotion ? 0 : portraitY }}>
               <Image src="/assets/profile_xelpaxu.jpg" alt="Axel John Nuqui" fill sizes="104px" className="object-cover" priority />
             </motion.span>
           </span>
-          <span data-neko-home aria-hidden="true" className="absolute -bottom-1 -right-1 flex size-7 items-center justify-center rounded-full border border-line bg-page text-muted transition-colors group-hover:border-line-strong group-hover:text-foreground group-focus-visible:text-foreground"><ArrowDownRight className="size-3.5" /></span>
+
         </motion.a>
+        </PokeButton>
       </div>
       <div>
         <h1 className="font-display text-5xl font-bold tracking-tight lg:text-[2.8rem]">Axel John Nuqui</h1>

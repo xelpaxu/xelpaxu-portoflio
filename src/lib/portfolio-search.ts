@@ -8,6 +8,7 @@ export interface SearchEntry {
 }
 const entries: SearchEntry[] = [
   { id: 'home', title: 'Home', detail: 'Axel John Nuqui’s portfolio', href: '/', kind: 'Page', keywords: 'profile about axel xelpaxu' },
+  { id: 'blog', title: 'Blog', detail: 'Notes on building, learning, and experiments', href: '/blog', kind: 'Page', keywords: 'writing articles stories' },
   { id: 'projects', title: 'Projects', detail: 'Browse all projects and technologies', href: '/projects', kind: 'Page' },
   { id: 'experience', title: 'Experience', detail: 'Work history and learning journey', href: '/experience', kind: 'Page', keywords: 'career jobs internship education' },
   { id: 'about', title: 'Get to know me', detail: 'A few quick answers from Axel', href: '/#about', kind: 'Page', keywords: 'about questions biography' },

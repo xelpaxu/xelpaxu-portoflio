@@ -9,6 +9,8 @@ import ProjectActions from '@/components/projects/ProjectActions';
 import { getProjectLinks } from '@/lib/project-links';
 import ProjectGallery from '@/components/projects/ProjectGallery';
 import { getProjectImages } from '@/lib/project-images';
+import LikeButton from '@/components/LikeButton';
+import Testimonials from '@/components/Testimonials';
 
 export function generateStaticParams() { return projects.map(project => ({ slug: project.id })); }
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -35,6 +37,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         {!!links.length && <div className="shrink-0"><ProjectActions project={project} align="start" /></div>}
       </div>
       <p className="mt-5 max-w-3xl text-base leading-8 text-muted">{project.description}</p>
+      <LikeButton key={project.id} projectId={project.id} title={project.title} />
     </header>
     <ProjectGallery key={project.id} title={project.title} images={getProjectImages(project)} />
     <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1fr)_260px] lg:gap-16">
@@ -50,6 +53,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <ul className="mt-6 space-y-6">{features.map(feature => <li key={feature.title} className="flex items-start gap-3"><Check className="mt-1 size-4 shrink-0 text-subtle" aria-hidden="true" /><div><h3 className="text-sm font-semibold leading-6">{feature.title}</h3>{feature.description && <p className="mt-2 text-sm leading-7 text-muted">{feature.description}</p>}</div></li>)}</ul>
         </section>}
         {study && <section id="workflow" aria-labelledby="workflow-heading" className="scroll-mt-28 border-t border-line pt-7"><h2 id="workflow-heading" className="text-xl font-semibold tracking-tight">A typical workflow</h2><ol className="mt-6 space-y-4">{study.workflow.map((step, i) => <li key={step} className="flex items-start gap-3"><span aria-hidden="true" className="flex size-6 shrink-0 items-center justify-center rounded-full border border-line text-[11px] text-subtle">{i + 1}</span><p className="text-sm leading-7 text-muted">{step}</p></li>)}</ol></section>}
+        <section id="testimonials" aria-labelledby="testimonials-heading" className="scroll-mt-28">
+          <h2 id="testimonials-heading" className="text-xl font-semibold tracking-tight">Testimonials</h2>
+          <p className="mb-5 mt-2 text-sm leading-7 text-muted">From the people who built and used {project.title}.</p>
+          <Testimonials projectId={project.id} />
+        </section>
       </div>
       <aside className="min-w-0 self-start border-t border-line pt-6 lg:sticky lg:top-28" aria-label="Project information">
         <h2 className="text-sm font-semibold">Built with</h2><div className="mt-5"><TechStack tags={project.tags} /></div>

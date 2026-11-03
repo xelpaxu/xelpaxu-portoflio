@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from '@/components/ThemeProvider';
 import NekoCompanion from '@/components/NekoCompanion';
 import StartupReveal from '@/components/StartupReveal';
+import ClickBurst from '@/components/ClickBurst';
 import SmoothScrolling from '@/components/SmoothScrolling';
 import { ShaderBackground } from '@/components/ShaderBackground';
 import { GrainOverlay } from '@/components/GrainOverlay';
@@ -28,13 +29,13 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: `try{document.documentElement.dataset.theme=localStorage.getItem('portfolio-theme')==='light'?'light':'dark';var accent=localStorage.getItem('portfolio-accent');document.documentElement.dataset.accent=['default','violet','blue','mint','rose','amber'].includes(accent)?accent:'default'}catch{document.documentElement.dataset.accent='default'}` }} />
+        <script dangerouslySetInnerHTML={{ __html: `var systemTheme=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=systemTheme;try{var savedTheme=localStorage.getItem('portfolio-theme');document.documentElement.dataset.theme=['light','dark'].includes(savedTheme)?savedTheme:systemTheme;var accent=localStorage.getItem('portfolio-accent');document.documentElement.dataset.accent=['default','violet','blue','mint','rose','amber'].includes(accent)?accent:'default'}catch{document.documentElement.dataset.accent='default'}` }} />
       </head>
       <body
         className={`${hankenGrotesk.className} ${hankenGrotesk.variable} bg-page text-foreground antialiased`}
       >
           <ThemeProvider><SmoothScrolling /><ShaderBackground /><GrainOverlay />{children}<NekoCompanion /></ThemeProvider>
-          <StartupReveal />
+          <StartupReveal /><ClickBurst />
       </body>
     </html>
   );

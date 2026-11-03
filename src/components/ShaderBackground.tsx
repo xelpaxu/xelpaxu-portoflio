@@ -15,8 +15,8 @@ export function ShaderBackground() {
     let timer: ReturnType<typeof setTimeout>;
     const sync = () => {
       clearTimeout(timer);
-      // Let content and the startup reveal render before loading WebGL.
-      timer = setTimeout(() => setAnimated(preference.matches), preference.matches ? 3800 : 0);
+      // Warm WebGL beneath the splash instead of waiting for the reveal.
+      timer = setTimeout(() => setAnimated(preference.matches), 0);
     };
     sync();
     preference.addEventListener('change', sync);

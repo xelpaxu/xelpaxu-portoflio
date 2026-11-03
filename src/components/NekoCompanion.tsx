@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { emitNekoStep, NEKO_CHASE_EVENT } from '@/lib/neko-events';
 import { createNeko, NEKO_SIZE, parkNeko, resizeNeko, stepNeko, targetNeko } from '@/lib/neko';
 
 export default function NekoCompanion() {
@@ -26,6 +27,8 @@ export default function NekoCompanion() {
     let focused = false;
     let reactionUntil = 0;
     let reactionIndex = 0;
+    let chaseUntil = 0;
+    let chaseIndex = 0;
     let dismissed = false;
     const reactions = ['meow! ♡', 'purr... ♡', 'meow meow!'];
 
@@ -40,6 +43,16 @@ export default function NekoCompanion() {
       reactionUntil = now + 1800;
       dismissed = false;
       if (bubble.current) bubble.current.textContent = reactions[reactionIndex++ % reactions.length];
+    };
+    const onChase = () => {
+      if (!enabled || document.hidden || motion.matches) return;
+      const now = performance.now();
+      if (now < chaseUntil) return;
+      chaseUntil = now + 1700;
+      reactionUntil = chaseUntil;
+      dismissed = false;
+      const calls = ['Mrrrp!', 'Hsssss!', 'Mraow!', 'Prrt! Mrr!'];
+      if (bubble.current) bubble.current.textContent = calls[chaseIndex++ % calls.length];
     };
     const onEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') { dismissed = true; reactionUntil = 0; }
@@ -71,6 +84,8 @@ export default function NekoCompanion() {
         cat.idleSince = now - 4400;
       }
       const cell = stepNeko(cat, now, delta);
+      // Publish the paws in viewport coordinates, matching the fixed sprite.
+      emitNekoStep({ clientX: cat.x, clientY: cat.y + NEKO_SIZE * 0.3, radius: NEKO_SIZE * 0.4 });
       const message = bubble.current;
       if (message) {
         const reacting = now < reactionUntil;
@@ -99,7 +114,7 @@ export default function NekoCompanion() {
     }
     const onPointer = (event: PointerEvent) => {
       if (event.pointerType !== 'mouse' || !canAnimate()) return;
-      if (hovered || focused || performance.now() < reactionUntil) return;
+      if (hovered || focused || (performance.now() < reactionUntil && performance.now() >= chaseUntil)) return;
       hasFollowedPointer = true;
       targetNeko(cat, event.clientX, event.clientY, window.innerWidth, window.innerHeight, performance.now());
     };
@@ -123,6 +138,7 @@ export default function NekoCompanion() {
     element.addEventListener('blur', onBlur);
     element.addEventListener('click', onPet);
     window.addEventListener('keydown', onEscape);
+    window.addEventListener(NEKO_CHASE_EVENT, onChase);
     sync();
     window.addEventListener('pointermove', onPointer, { passive: true });
     document.documentElement.addEventListener('pointerleave', onLeave);
@@ -143,6 +159,7 @@ export default function NekoCompanion() {
       element.removeEventListener('blur', onBlur);
       element.removeEventListener('click', onPet);
       window.removeEventListener('keydown', onEscape);
+      window.removeEventListener(NEKO_CHASE_EVENT, onChase);
       window.removeEventListener('pointermove', onPointer);
       document.documentElement.removeEventListener('pointerleave', onLeave);
       window.removeEventListener('blur', onLeave);

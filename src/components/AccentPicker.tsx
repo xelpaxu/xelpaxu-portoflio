@@ -5,7 +5,7 @@ import { Cat, Check, Palette } from 'lucide-react';
 
 const accents = [
   { id: 'default', name: 'Default', color: '#e4e4e7' },
-  { id: 'violet', name: 'Violet', color: '#a5b4fc' },
+  { id: 'violet', name: 'Light red', color: '#fca5a5' },
   { id: 'blue', name: 'Ocean', color: '#7dd3fc' },
   { id: 'mint', name: 'Mint', color: '#6ee7b7' },
   { id: 'rose', name: 'Rose', color: '#fda4af' },
