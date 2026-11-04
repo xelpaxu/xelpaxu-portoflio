@@ -109,7 +109,7 @@ export default function Navbar() {
             >
               <Folder className="size-4 min-[400px]:hidden" aria-hidden="true" /><span className="hidden min-[400px]:inline">Projects</span>
             </Link>
-            <Link href="/blog" aria-current={activeSection === 'blog' ? 'page' : undefined} className={`inline-flex min-h-11 items-center rounded-full px-2 py-1.5 text-xs font-medium transition-all duration-300 md:px-3 md:text-base ${activeSection === 'blog' ? 'text-accent' : 'text-muted hover:text-foreground'}`}>Blog</Link>
+            <Link href="/blog" aria-current={activeSection === 'blog' ? 'page' : undefined} className={`inline-flex min-h-11 items-center rounded-full px-2 py-1.5 text-xs font-medium transition-all duration-300 md:px-3 md:text-base ${activeSection === 'blog' ? 'text-accent' : 'text-muted hover:text-foreground'}`}>Blogs</Link>
           </div>
 
           {/* Right group - Search */}
@@ -140,7 +140,7 @@ export default function Navbar() {
               <span className="text-xs text-muted transition-colors group-hover:text-foreground md:text-sm">
                 Search
               </span>
-              <span className="hidden text-[10px] font-medium text-subtle md:inline-block">
+              <span className="hidden text-[9px] font-medium text-subtle md:inline-block">
                 Ctrl + K
               </span>
             </button>
