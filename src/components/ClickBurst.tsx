@@ -2,6 +2,12 @@
 
 import { useEffect } from 'react';
 
+// Length and thickness are in globals.css under .cursor-click-burst i.
+const BURST_ANGLES = [135, 180, 225, 270, 315];
+const BURST_SPACING = 4;
+const BURST_TRAVEL = 13;
+const BURST_DURATION = 420;
+
 export default function ClickBurst() {
   useEffect(() => {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -13,18 +19,19 @@ export default function ClickBurst() {
       node.setAttribute('aria-hidden', 'true');
       node.style.left = `${event.clientX}px`;
       node.style.top = `${event.clientY}px`;
-      for (const angle of [-180, -135, -90, -45]) {
+      for (const angle of BURST_ANGLES) {
         const ray = document.createElement('i');
-        ray.style.transform = `rotate(${angle}deg)`;
         node.appendChild(ray);
+        const animation = ray.animate([
+          { transform: `rotate(${angle}deg) translateX(${BURST_SPACING}px) scaleX(1)`, opacity: 1 },
+          { transform: `rotate(${angle}deg) translateX(${BURST_TRAVEL}px) scaleX(.3)`, opacity: 0 },
+        ], { duration: BURST_DURATION, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'forwards' });
+        if (angle === BURST_ANGLES[0]) {
+          animation.onfinish = () => { node.remove(); nodes.delete(node); };
+        }
       }
       document.body.appendChild(node);
       nodes.add(node);
-      const animation = node.animate([
-        { opacity: 0.75, transform: 'scale(.45)' },
-        { opacity: 0, transform: 'scale(1.4)' },
-      ], { duration: 300, easing: 'cubic-bezier(.15,.7,.3,1)' });
-      animation.onfinish = () => { node.remove(); nodes.delete(node); };
     };
     window.addEventListener('click', onClick, { passive: true });
     return () => { window.removeEventListener('click', onClick); nodes.forEach(node => node.remove()); };

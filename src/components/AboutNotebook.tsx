@@ -15,8 +15,8 @@ const IloiloMap = dynamic(() => import('./IloiloMap'), { ssr: false, loading: ()
 const questions = [
   {
     question: 'How did you get started?',
-    answer: 'Google Sites, back in 2017. That was my first website. In 2024, I started learning React.',
-    link: '/experience', label: 'See the journey', aside: 'From dragging blocks to writing components.',
+    answer: 'Google Sites, back in 2017 where I built my first website (which really got my interest in web). Then when I was in grade 12, I joined MIT App Invention Contest, where we were one of the top 10 finalists.',
+    link: '/experience', label: 'See the journey'
   },
   {
     question: 'What connects your projects?',
@@ -25,8 +25,8 @@ const questions = [
   },
   {
     question: 'What are you curious about?',
-    answer: 'Where AI can actually help. I’m exploring it through applications, including a camera-based face-identification prototype.',
-    link: '/projects/memowee', label: 'See the experiment', aside: 'Learning by trying things out.',
+    answer: "I'm really curious and interested about system design where it really got me doom scrolling tiktok just by stalking those rick and morty or family guy explanations about system design.",
+    link: '/projects/memowee', label: 'See the experiment'
   },
   {
     question: 'Where do you live?',
