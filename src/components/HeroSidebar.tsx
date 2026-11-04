@@ -208,7 +208,7 @@ export default function HeroSidebar() {
             <FaLinkedinIn size={18} />
           </a>
           <a
-            href="https://facebook.com/yourusername"
+            href="https://facebook.com/blipbloppppp"
             target="_blank"
             rel="noopener noreferrer"
             className="flex h-11 w-11 items-center justify-center rounded-lg bg-transparent text-muted transition hover:bg-surface hover:text-foreground"
