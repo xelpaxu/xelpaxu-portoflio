@@ -1,9 +1,9 @@
+import ContactButton from '@/components/ContactButton';
 import PortfolioEmptyState from '@/components/PortfolioEmptyState';
 import Image from 'next/image';
-import Link from 'next/link';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { ArrowUpRight, MapPin, ArrowDownRight } from 'lucide-react';
+import { MapPin, ArrowDownRight } from 'lucide-react';
 import { workExperiences } from '@/data/experience/work-experience';
 import { education } from '@/data/experience/journey';
 import TechStack from '@/components/TechStack';
@@ -52,7 +52,7 @@ export default function ExperienceArchive() {
         <div className="mb-7 text-center"><h2 id="journey-heading" className="text-2xl font-semibold tracking-tight">Learning journey</h2><p className="mt-2 text-sm text-muted">A few of the steps that brought me here.</p></div>
         <ol className="divide-y divide-line border-y border-line">{milestones.map(item => <li key={item.id} className="flex items-start gap-5 py-7 sm:gap-7"><span className="mt-0.5 min-w-12 text-sm font-medium tabular-nums text-subtle">{item.date}</span><div className="min-w-0"><h3 className="text-base font-semibold leading-7">{item.title}</h3><p className="mt-2 text-sm leading-7 text-muted">{item.description}</p></div></li>)}</ol>
       </section>
-      <div className="mt-12 flex flex-col items-center justify-center gap-2 text-center sm:mt-16"><p className="text-sm text-muted">Interested in working together?</p><Link href="/#contact" className="inline-flex min-h-11 items-center gap-2 text-sm font-medium transition-colors hover:text-accent">Get in touch<ArrowUpRight className="size-4" aria-hidden="true" /></Link></div>
+      <div className="mt-12 flex flex-col items-center justify-center gap-2 text-center sm:mt-16"><p className="text-sm text-muted">Interested in working together?</p><ContactButton /></div>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import NekoCompanion from '@/components/NekoCompanion';
 import StartupReveal from '@/components/StartupReveal';
 import ClickBurst from '@/components/ClickBurst';
+import { ContactProvider } from '@/components/ContactProvider';
 import SmoothScrolling from '@/components/SmoothScrolling';
 import { ShaderBackground } from '@/components/ShaderBackground';
 import { GrainOverlay } from '@/components/GrainOverlay';
@@ -34,7 +35,7 @@ export default function RootLayout({
       <body
         className={`${hankenGrotesk.className} ${hankenGrotesk.variable} bg-page text-foreground antialiased`}
       >
-          <ThemeProvider><SmoothScrolling /><ShaderBackground /><GrainOverlay />{children}<NekoCompanion /></ThemeProvider>
+          <ThemeProvider><ContactProvider><SmoothScrolling /><ShaderBackground /><GrainOverlay />{children}<NekoCompanion /></ContactProvider></ThemeProvider>
           <StartupReveal /><ClickBurst />
       </body>
     </html>

@@ -7,6 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight, CornerDownLeft, MessageCircle, RotateCcw } from 'lucide-react';
 import { profile } from '@/data/profile';
 import AboutLikeButton from '@/components/AboutLikeButton';
+import { useContact } from './ContactProvider';
 
 const questions = [
   {
@@ -32,6 +33,7 @@ const questions = [
 ];
 
 export default function AboutNotebook() {
+  const { openContact } = useContact();
   const [selected, setSelected] = useState(0);
   const [pending, setPending] = useState(false);
   const [visited, setVisited] = useState<number[]>([0]);
@@ -85,7 +87,7 @@ export default function AboutNotebook() {
               </motion.div> : <motion.div key={selected} initial={{ opacity: 0, y: reducedMotion ? 0 : 10, filter: reducedMotion ? 'none' : 'blur(3px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0 }} transition={{ duration: reducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}>
                 <p className="text-lg leading-8 tracking-tight text-strong">{current.answer}</p>
                 <p className="mt-4 text-xs leading-6 text-muted">{current.aside}</p>
-                <Link href={current.link} className="mt-4 inline-flex min-h-11 items-center gap-2 text-xs font-medium text-accent hover:underline">{current.label}<ArrowUpRight className="size-3.5" aria-hidden="true" /></Link>
+                <Link href={current.link} onClick={event => { if (current.link?.startsWith('mailto:')) { event.preventDefault(); openContact(); } }} className="mt-4 inline-flex min-h-11 items-center gap-2 text-xs font-medium text-accent hover:underline">{current.label}<ArrowUpRight className="size-3.5" aria-hidden="true" /></Link>
               </motion.div>}
             </AnimatePresence>
           </div>

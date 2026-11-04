@@ -3,13 +3,15 @@
 import Image from 'next/image';
 import PokeButton from '@/components/PokeButton';
 import { profile } from '@/data/profile';
+import { useContact } from './ContactProvider';
 import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import { motion, useMotionValue, useSpring, useReducedMotion } from 'framer-motion';
-import { Download } from 'lucide-react';
+import { Download, Send } from 'lucide-react';
 import { FaFacebookF, FaGithub, FaLinkedinIn } from 'react-icons/fa';
 import { IoMdMail } from 'react-icons/io';
 
 export default function HeroSidebar() {
+  const { openContact } = useContact();
   const technologies = [
     { name: 'React', logo: '/assets/logos/reacticon.svg' },
     { name: 'Next.js', logo: '/assets/logos/nextjsicon.png' },
@@ -21,6 +23,10 @@ export default function HeroSidebar() {
   const resumeX = useSpring(0, { stiffness: 300, damping: 22 });
   const resumeY = useSpring(0, { stiffness: 300, damping: 22 });
   function resetResume() { setResumeActive(false); resumeX.set(0); resumeY.set(0); }
+  const [contactActive, setContactActive] = useState(false);
+  const contactX = useSpring(0, { stiffness: 300, damping: 22 });
+  const contactY = useSpring(0, { stiffness: 300, damping: 22 });
+  function resetContact() { setContactActive(false); contactX.set(0); contactY.set(0); }
   const reducedMotion = useReducedMotion();
   const portraitX = useSpring(0, { stiffness: 180, damping: 22 });
   const portraitY = useSpring(0, { stiffness: 180, damping: 22 });
@@ -134,7 +140,7 @@ export default function HeroSidebar() {
           style={{ x: reducedMotion ? 0 : resumeX, y: reducedMotion ? 0 : resumeY }}
           target="_blank"
           rel="noopener noreferrer"
-          className="group inline-flex w-fit items-center gap-3 rounded-full border border-accent/50 bg-transparent px-5 py-2.5 text-sm font-medium text-accent transition hover:bg-surface hover:text-foreground"
+          className="group inline-flex min-h-11 w-fit items-center gap-3 rounded-full border border-accent/50 bg-transparent px-5 py-2.5 text-sm font-medium text-accent transition hover:bg-surface hover:text-foreground"
         >
           <span className="relative block h-5 w-[78px] overflow-hidden"><motion.span animate={{ y: resumeActive ? -20 : 0 }} transition={{ duration: reducedMotion ? 0 : 0.2 }} className="block"><span className="block h-5">Resume</span><span aria-hidden="true" className="block h-5">Take a look</span></motion.span></span>
           
@@ -171,12 +177,23 @@ export default function HeroSidebar() {
         </div>
 
         <div className="flex items-center gap-2">
-        <a
-          href={`mailto:${profile.email}`}
-          className="inline-flex w-fit items-center justify-center rounded-lg bg-accent px-6 py-2 text-sm font-medium text-accent-ink transition hover:bg-action-hover"
+        <motion.button
+          type="button"
+          onClick={() => openContact()}
+          aria-label="Get in touch"
+          onPointerEnter={() => setContactActive(true)}
+          onPointerMove={event => { if (reducedMotion || event.pointerType !== 'mouse') return; const rect = event.currentTarget.getBoundingClientRect(); contactX.set((event.clientX - rect.left - rect.width / 2) * 0.045); contactY.set((event.clientY - rect.top - rect.height / 2) * 0.07); }}
+          onPointerLeave={resetContact}
+          onPointerCancel={resetContact}
+          onFocus={() => setContactActive(true)}
+          onBlur={resetContact}
+          whileTap={reducedMotion ? undefined : { scale: 0.96 }}
+          style={{ x: reducedMotion ? 0 : contactX, y: reducedMotion ? 0 : contactY }}
+          className="group inline-flex min-h-11 w-fit items-center gap-3 rounded-full border border-accent bg-accent px-5 py-2.5 text-sm font-medium text-accent-ink transition-colors hover:bg-accent/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
         >
-          Get in Touch
-        </a>
+          <span className="relative block h-5 w-[90px] overflow-hidden"><motion.span animate={{ y: contactActive ? -20 : 0 }} transition={{ duration: reducedMotion ? 0 : 0.2 }} className="block"><span className="block h-5">Get in touch</span><span aria-hidden="true" className="block h-5">Say hello</span></motion.span></span>
+          <motion.span aria-hidden="true" className="flex" animate={{ x: contactActive && !reducedMotion ? 2 : 0, y: contactActive && !reducedMotion ? -2 : 0, rotate: contactActive && !reducedMotion ? -6 : 0 }} transition={{ duration: reducedMotion ? 0 : 0.2 }}><Send className="size-5" /></motion.span>
+        </motion.button>
         </div>
 
         {/* Social Icons Array */}
