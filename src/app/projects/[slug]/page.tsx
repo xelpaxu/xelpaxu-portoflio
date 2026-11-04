@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, ArrowRight, Check, ArrowUpRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, BriefcaseBusiness, MonitorSmartphone, CircleDot } from 'lucide-react';
 import { projects } from '@/data/projects/projects';
 import RouteShell from '@/components/RouteShell';
 import TechStack from '@/components/TechStack';
@@ -11,6 +12,13 @@ import ProjectGallery from '@/components/projects/ProjectGallery';
 import { getProjectImages } from '@/lib/project-images';
 import LikeButton from '@/components/LikeButton';
 import Testimonials from '@/components/Testimonials';
+import { testimonials } from '@/data/testimonials';
+import { getProjectPlatform, platformLabels } from '@/lib/project-presentation';
+import ContactButton from '@/components/ContactButton';
+import ProjectDetailTabs, { type ProjectDetailTab } from '@/components/projects/ProjectDetailTabs';
+import ProjectFeatures from '@/components/projects/ProjectFeatures';
+import ProjectWorkflow from '@/components/projects/ProjectWorkflow';
+import { projectDetails } from '@/data/projects/project-details';
 
 export function generateStaticParams() { return projects.map(project => ({ slug: project.id })); }
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -26,46 +34,68 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const index = projects.indexOf(project);
   const next = projects[(index + 1) % projects.length];
   const previous = projects[(index - 1 + projects.length) % projects.length];
+  const platform = getProjectPlatform(project);
+  const hasTestimonials = testimonials.some(item => item.projectId === project.id);
   const study = project.caseStudy;
   const features = study?.features ?? project.notes?.map(note => ({ title: note, description: '' })) ?? [];
+  const detailContent = projectDetails[project.id];
+  const featureGroups = detailContent?.featureGroups ?? [{ title: 'Core capabilities', summary: project.description, features }];
+  const journeys = detailContent?.journeys ?? (study?.workflow.length ? [{ id: 'main', title: 'A typical workflow', summary: project.description, steps: study.workflow.map((description, index) => ({ title: `Step ${index + 1}`, actor: 'User', description, result: '' })) }] : []);
   const links = getProjectLinks(project);
+  const statusLabels = { operational: 'Live', beta: 'Beta', 'coming-soon': 'Coming soon', archived: 'Archived', project: 'Project' };
+  const previousCover = getProjectImages(previous)[0];
+  const nextCover = getProjectImages(next)[0];
+  const detailTabs: ProjectDetailTab[] = [
+    {
+      id: 'overview', label: 'Overview', content: <div className="project-tab-overview">
+        <div><h2>About the project</h2><div className="project-tab-prose">{(study?.overview ?? [project.description]).map(paragraph => <p key={paragraph}>{paragraph}</p>)}</div></div>
+        <aside className="project-tab-context" aria-label="Project context">
+          {study && <><div><h3>The goal</h3><p>{study.goal}</p></div><div><h3>Who it is for</h3><p>{study.audience}</p></div></>}
+          <div><h3>Platform</h3><p>{platformLabels[platform]}</p></div>
+        </aside>
+      </div>,
+    },
+    ...(featureGroups.some(group => group.features.length) ? [{
+      id: 'features', label: 'Features', content: <ProjectFeatures groups={featureGroups} />,
+    }] : []),
+    ...(journeys.length ? [{
+      id: 'workflow', label: 'Workflow', content: <ProjectWorkflow journeys={journeys} />,
+    }] : []),
+    {
+      id: 'build', label: 'Build details', content: <div className="project-tab-build">
+        <div><h2>Built with</h2><div className="mt-5"><TechStack tags={project.tags} /></div>
+          {!!study?.technicalNotes.length && <div className="project-tab-prose mt-6">{study.technicalNotes.map(note => <p key={note}>{note}</p>)}</div>}
+          {!!links.length && <nav aria-label="Project resources" className="project-tab-resources">{links.map(link => <a key={`${link.kind}-${link.href}`} href={link.href} target="_blank" rel="noopener noreferrer">{link.label}<ArrowUpRight size={14} aria-hidden="true" /></a>)}</nav>}
+        </div>
+        {!!project.components?.length && <div className="project-tab-applications"><h2>Connected applications</h2>{project.components.map(component => <article key={component.name}><h3>{component.name}</h3><p>{component.description}</p><div className="mt-4"><TechStack tags={component.tags} /></div>{component.github && <a href={component.github} target="_blank" rel="noopener noreferrer">{component.name} on GitHub<ArrowUpRight size={14} aria-hidden="true" /></a>}</article>)}</div>}
+      </div>,
+    },
+    ...(hasTestimonials ? [{
+      id: 'feedback', label: 'Feedback', content: <div><h2>From the people behind the project</h2><p className="mb-6 mt-3 text-sm leading-7 text-muted">From the people who built and used {project.title}.</p><Testimonials projectId={project.id} /></div>,
+    }] : []),
+  ];
   return <RouteShell>
-    <nav aria-label="Breadcrumb" className="mb-9 flex flex-wrap items-center justify-start gap-2 text-xs text-subtle"><Link href="/" className="hover:text-foreground">Home</Link><span aria-hidden="true">/</span><Link href="/projects" className="hover:text-foreground">Projects</Link><span aria-hidden="true">/</span><span aria-current="page" className="text-strong">{project.title}</span></nav>
-    <header className="mb-9">
-      <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
-        <div className="min-w-0">{project.category && <p className="mb-3 text-xs text-subtle">{project.category}</p>}<h1 className="text-4xl font-semibold tracking-tight sm:text-6xl">{project.title}</h1></div>
-        {!!links.length && <div className="shrink-0"><ProjectActions project={project} align="start" /></div>}
+    <article className="case-study">
+      <div className="case-topline"><Link href="/projects"><ArrowLeft size={15} aria-hidden="true" />All projects</Link><span>{project.category ?? platformLabels[platform]}</span></div>
+      <header className="case-hero">
+        <div className="case-title"><h1>{project.title}</h1></div>
+        {!!links.length && <div className="case-hero-actions"><ProjectActions project={project} align="start" /></div>}
+      </header>
+      <div className="case-facts">
+        {project.role && <div className="case-fact"><BriefcaseBusiness size={17} aria-hidden="true" /><dl><dt>My role</dt><dd>{project.role}</dd></dl></div>}
+        <div className="case-fact"><MonitorSmartphone size={17} aria-hidden="true" /><dl><dt>Platform</dt><dd>{platformLabels[platform]}</dd></dl></div>
+        {project.status !== 'project' && <div className="case-fact"><CircleDot size={17} aria-hidden="true" /><dl><dt>Status</dt><dd>{statusLabels[project.status]}</dd></dl></div>}
+        <div className="case-appreciation"><LikeButton key={project.id} projectId={project.id} title={project.title} /></div>
       </div>
-      <p className="mt-5 max-w-3xl text-base leading-8 text-muted">{project.description}</p>
-      <LikeButton key={project.id} projectId={project.id} title={project.title} />
-    </header>
-    <ProjectGallery key={project.id} title={project.title} images={getProjectImages(project)} />
-    <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1fr)_260px] lg:gap-16">
-      <div className="min-w-0 space-y-10 sm:space-y-12">
-        <section id="overview" aria-labelledby="overview-heading" className="scroll-mt-28">
-          <h2 id="overview-heading" className="text-2xl font-semibold tracking-tight">Overview</h2>
-          <div className="mt-5 max-w-prose space-y-5">{(study?.overview ?? [project.description]).map(paragraph => <p key={paragraph} className="text-base leading-8 text-muted">{paragraph}</p>)}</div>
-          {study && <div className="mt-6 border-l-2 border-line-strong pl-5"><h3 className="text-sm font-semibold">The goal</h3><p className="mt-2 text-sm leading-7 text-muted">{study.goal}</p></div>}
-        </section>
-        {!!project.components?.length && <section aria-labelledby="applications-heading" className="border-t border-line pt-7"><h2 id="applications-heading" className="text-xl font-semibold tracking-tight">Two connected applications</h2><div className="mt-6 grid gap-7 sm:grid-cols-2">{project.components.map(component => <article key={component.name}><h3 className="text-base font-semibold">{component.name}</h3><p className="mt-2 text-sm leading-7 text-muted">{component.description}</p><div className="mt-4"><TechStack tags={component.tags} /></div>{component.github && <a href={component.github} target="_blank" rel="noopener noreferrer" aria-label={`View ${component.name} on GitHub (opens in a new tab)`} className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-strong hover:text-accent">{component.name} on GitHub<ArrowUpRight className="size-3.5" aria-hidden="true" /></a>}</article>)}</div></section>}
-        {!!features.length && <section id="features" aria-labelledby="features-heading" className="scroll-mt-28 border-t border-line pt-7">
-          <h2 id="features-heading" className="text-xl font-semibold tracking-tight">What it does</h2>
-          <ul className="mt-6 space-y-6">{features.map(feature => <li key={feature.title} className="flex items-start gap-3"><Check className="mt-1 size-4 shrink-0 text-subtle" aria-hidden="true" /><div><h3 className="text-sm font-semibold leading-6">{feature.title}</h3>{feature.description && <p className="mt-2 text-sm leading-7 text-muted">{feature.description}</p>}</div></li>)}</ul>
-        </section>}
-        {study && <section id="workflow" aria-labelledby="workflow-heading" className="scroll-mt-28 border-t border-line pt-7"><h2 id="workflow-heading" className="text-xl font-semibold tracking-tight">A typical workflow</h2><ol className="mt-6 space-y-4">{study.workflow.map((step, i) => <li key={step} className="flex items-start gap-3"><span aria-hidden="true" className="flex size-6 shrink-0 items-center justify-center rounded-full border border-line text-[11px] text-subtle">{i + 1}</span><p className="text-sm leading-7 text-muted">{step}</p></li>)}</ol></section>}
-        <section id="testimonials" aria-labelledby="testimonials-heading" className="scroll-mt-28">
-          <h2 id="testimonials-heading" className="text-xl font-semibold tracking-tight">Testimonials</h2>
-          <p className="mb-5 mt-2 text-sm leading-7 text-muted">From the people who built and used {project.title}.</p>
-          <Testimonials projectId={project.id} />
-        </section>
+      <div className="case-workspace">
+        <ProjectGallery key={`gallery-${project.id}`} title={project.title} images={getProjectImages(project)} platform={platform} />
+        <ProjectDetailTabs key={`details-${project.id}`} tabs={detailTabs} />
       </div>
-      <aside className="min-w-0 self-start border-t border-line pt-6 lg:sticky lg:top-28" aria-label="Project information">
-        <h2 className="text-sm font-semibold">Built with</h2><div className="mt-5"><TechStack tags={project.tags} /></div>
-        {study && <div className="mt-7 space-y-4 border-t border-line pt-5">{study.technicalNotes.map(note => <p key={note} className="text-xs leading-6 text-muted">{note}</p>)}</div>}
-        <dl className="mt-7 space-y-5 border-t border-line pt-5 text-sm"><div><dt className="text-xs text-subtle">Collection</dt><dd className="mt-1.5">{project.featured ? 'Featured work' : 'Projects'}</dd></div>{study && <div><dt className="text-xs text-subtle">Who it is for</dt><dd className="mt-1.5 text-sm leading-7 text-muted">{study.audience}</dd></div>}</dl>
-        {!!links.length && <nav aria-label="Project resources" className="mt-6 border-t border-line pt-3">{links.map(link => <a key={`${link.kind}-${link.href}`} href={link.href} target="_blank" rel="noopener noreferrer" className="flex min-h-11 items-center justify-between gap-3 text-sm text-strong hover:text-accent">{link.label}<ArrowUpRight className="size-3.5" aria-hidden="true" /></a>)}</nav>}
-      </aside>
-    </div>
-    <nav aria-label="More projects" className="mt-16 grid grid-cols-2 gap-6 border-t border-line pt-7"><Link href={previous.link} className="group min-w-0"><span className="flex items-center gap-2 text-xs text-subtle"><ArrowLeft className="size-3.5" aria-hidden="true" />Previous project</span><span className="mt-2 block text-lg font-medium group-hover:text-accent">{previous.title}</span></Link><Link href={next.link} className="group min-w-0 text-right"><span className="flex items-center justify-end gap-2 text-xs text-subtle">Next project<ArrowRight className="size-3.5" aria-hidden="true" /></span><span className="mt-2 block text-lg font-medium group-hover:text-accent">{next.title}</span></Link></nav>
+      <div className="case-conversation"><div><h2>What could we build together?</h2><p>Have an idea that belongs out in the world?</p></div><ContactButton label="Let us talk" topic="project" /></div>
+      <nav aria-label="More projects" className="case-next-projects">
+        <Link href={previous.link} className="case-project-link"><div className="case-project-preview">{previousCover && <Image src={previousCover.src} alt="" fill unoptimized sizes="100px" style={{ objectFit: 'cover' }} />}</div><div><span><ArrowLeft size={12} aria-hidden="true" />Previous project</span><strong>{previous.title}</strong></div></Link>
+        <Link href={next.link} className="case-project-link"><div className="case-project-preview">{nextCover && <Image src={nextCover.src} alt="" fill unoptimized sizes="100px" style={{ objectFit: 'cover' }} />}</div><div><span>Next project<ArrowRight size={12} aria-hidden="true" /></span><strong>{next.title}</strong></div><ArrowUpRight size={18} className="case-next-arrow" aria-hidden="true" /></Link>
+      </nav>
+    </article>
   </RouteShell>;
 }

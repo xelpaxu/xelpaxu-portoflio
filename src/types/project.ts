@@ -5,6 +5,24 @@ export interface ProjectMetric {
   value: string;
 }
 
+export interface ProjectFeatureGroup {
+  title: string;
+  summary: string;
+  features: { title: string; description: string; details?: string[] }[];
+}
+
+export interface ProjectJourney {
+  id: string;
+  title: string;
+  summary: string;
+  steps: { title: string; actor: string; description: string; result: string }[];
+}
+
+export interface ProjectDetailContent {
+  featureGroups: ProjectFeatureGroup[];
+  journeys: ProjectJourney[];
+}
+
 export interface ProjectCaseStudy {
   overview: string[];
   audience: string;
