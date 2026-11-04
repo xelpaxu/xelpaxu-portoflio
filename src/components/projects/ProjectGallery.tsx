@@ -1,97 +1,85 @@
 'use client';
 
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
-import { useRef, useState, type KeyboardEvent } from 'react';
-import { ArrowLeft, ArrowRight, Images, Box } from 'lucide-react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { ArrowLeft, ArrowRight, Expand, Monitor, Smartphone, X } from 'lucide-react';
 import type { ProjectImage } from '@/types/project';
+import { getImagePresentation, type ProjectPlatform } from '@/lib/project-presentation';
 
-const StackedProjectGallery = dynamic(() => import('./StackedProjectGallery'));
-
-export default function ProjectGallery({ title, images }: { title: string; images: ProjectImage[] }) {
-  const [mode, setMode] = useState<'carousel' | 'stack'>('carousel');
+export default function ProjectGallery({ title, images, platform = 'web' }: { title: string; images: ProjectImage[]; platform?: ProjectPlatform }) {
   const [index, setIndex] = useState(0);
-  const pointerStart = useRef<{ x: number; y: number } | null>(null);
+  const [dimensions, setDimensions] = useState<Record<string, { width: number; height: number }>>({});
+  const [expanded, setExpanded] = useState(false);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const expandButton = useRef<HTMLButtonElement>(null);
+  const thumbnails = useRef<(HTMLButtonElement | null)[]>([]);
+  const pointer = useRef<{ x: number; y: number } | null>(null);
+  const current = images[index];
+  const presentation = current ? getImagePresentation(current, platform, dimensions[current.src]) : 'artwork';
+  const naturalWidth = current?.width ?? dimensions[current?.src ?? '']?.width;
+  const naturalHeight = current?.height ?? dimensions[current?.src ?? '']?.height;
   const multiple = images.length > 1;
-  const activeIndex = images.length ? index % images.length : 0;
-  const current = images[activeIndex];
+  const step = (delta: number) => setIndex(value => (value + delta + images.length) % images.length);
 
+  useEffect(() => {
+    const thumbnail = thumbnails.current[index];
+    const strip = thumbnail?.parentElement;
+    if (thumbnail && strip) {
+      if (getComputedStyle(strip).flexDirection === 'column') strip.scrollTop = thumbnail.offsetTop - strip.offsetTop - (strip.clientHeight - thumbnail.clientHeight) / 2;
+      else strip.scrollLeft = thumbnail.offsetLeft - strip.offsetLeft - (strip.clientWidth - thumbnail.clientWidth) / 2;
+    }
+  }, [index]);
+
+  useEffect(() => {
+    if (!expanded) return;
+    const element = dialog.current;
+    const overflow = document.body.style.overflow;
+    const trigger = expandButton.current;
+    document.body.style.overflow = 'hidden';
+    element?.showModal();
+    return () => { element?.close(); document.body.style.overflow = overflow; trigger?.focus({ preventScroll: true }); };
+  }, [expanded]);
+
+  const keyboard = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); step(event.key === 'ArrowRight' ? 1 : -1); }
+    if (event.key === 'Home') { event.preventDefault(); setIndex(0); }
+    if (event.key === 'End') { event.preventDefault(); setIndex(images.length - 1); }
+  };
   if (!current) return null;
-  if (!multiple) return (
-    <figure className="mb-8">
-      <div className="relative aspect-[16/10] overflow-hidden rounded-2xl ring-1 ring-foreground/10 sm:aspect-[2/1]">
-        <Image src={current.src} alt={current.alt} fill priority unoptimized sizes="(max-width: 1024px) 100vw, 1024px" style={{ objectFit: 'contain', objectPosition: current.position ?? 'center 65%' }} />
-      </div>
-      {current.caption && <figcaption className="mt-3 text-xs text-subtle">{current.caption}</figcaption>}
-    </figure>
-  );
+  const caption = current.caption && current.caption !== 'Project artwork' ? current.caption : `${title} / ${presentation === 'artwork' ? 'Cover' : 'Screen'} ${index + 1}`;
+  const image = (large: boolean) => <Image key={current.src} src={current.src} alt={current.alt} fill priority={index === 0 && !large} unoptimized draggable={false} sizes={large ? '95vw' : '(max-width: 768px) 100vw, 1050px'} className="project-carousel-image" style={{ objectFit: 'contain', objectPosition: 'center' }} onLoad={event => {
+    const { naturalWidth: width, naturalHeight: height } = event.currentTarget;
+    setDimensions(previous => previous[current.src]?.width === width && previous[current.src]?.height === height ? previous : { ...previous, [current.src]: { width, height } });
+  }} />;
 
-  function goTo(next: number) {
-    if (next === activeIndex) return;
-    setIndex(next);
-  }
-  function step(change: number) {
-    setIndex(previous => (previous + change + images.length) % images.length);
-  }
-
-  function onKeyDown(event: KeyboardEvent<HTMLElement>) {
-    if (!multiple) return;
-    if (event.key === 'ArrowRight') { event.preventDefault(); step(1); }
-    else if (event.key === 'ArrowLeft') { event.preventDefault(); step(-1); }
-    else if (event.key === 'Home') { event.preventDefault(); goTo(0); }
-    else if (event.key === 'End') { event.preventDefault(); goTo(images.length - 1); }
-  }
-
-  return (
-    <div className="mb-8 min-w-0">
-      <div className="mb-4 flex justify-end">
-        <div role="group" aria-label="Gallery view" className="inline-flex gap-1 rounded-full border border-line p-1">
-          <button type="button" aria-pressed={mode === 'carousel'} onClick={() => setMode('carousel')} className={`inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-xs transition-colors ${mode === 'carousel' ? 'bg-surface-raised text-foreground' : 'text-muted hover:text-foreground'}`}><Images className="size-3.5" aria-hidden="true" />Carousel</button>
-          <button type="button" aria-pressed={mode === 'stack'} onClick={() => setMode('stack')} className={`inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-xs transition-colors ${mode === 'stack' ? 'bg-surface-raised text-foreground' : 'text-muted hover:text-foreground'}`}><Box className="size-3.5" aria-hidden="true" />3D view</button>
-        </div>
-      </div>
-      {mode === 'stack' ? <StackedProjectGallery title={title} images={images} initialIndex={activeIndex} onIndexChange={setIndex} /> : (
-    <section aria-label={`${title} image gallery`} aria-roledescription="carousel" tabIndex={multiple ? 0 : undefined} onKeyDown={onKeyDown} className="mb-8 min-w-0 rounded-2xl">
-      <div
-        className="relative isolate aspect-[16/10] overflow-hidden rounded-2xl border border-line bg-surface sm:aspect-video"
-        style={{ touchAction: 'pan-y' }}
-        onPointerDown={event => {
-          if (!event.isPrimary || event.button !== 0) return;
-          pointerStart.current = { x: event.clientX, y: event.clientY };
-          event.currentTarget.setPointerCapture(event.pointerId);
-        }}
-        onPointerCancel={() => { pointerStart.current = null; }}
-        onPointerUp={event => {
-          const start = pointerStart.current;
-          pointerStart.current = null;
-          if (!start) return;
-          const dx = event.clientX - start.x;
-          const dy = event.clientY - start.y;
-          if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
-        }}
-      >
-        <div className="pointer-events-none absolute inset-0 flex transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none" style={{ transform: activeIndex === 0 ? 'none' : `translateX(-${activeIndex * 100}%)` }}>
-          {images.map((image, i) => <div key={`${i}-${image.src}`} role="group" aria-roledescription="slide" aria-label={`${i + 1} of ${images.length}`} aria-hidden={i !== activeIndex} className="relative h-full w-full shrink-0">
-            <Image src={image.src} alt={image.alt} fill unoptimized priority={i === 0} draggable={false} sizes="(max-width: 1152px) 100vw, 1152px" className="select-none object-contain" />
-          </div>)}
-        </div>
-      </div>
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
-        <div className="min-w-0 flex-1" aria-live="polite" aria-atomic="true">
-          <p className="flex items-center gap-2 text-xs text-subtle"><Images className="size-3.5 shrink-0" aria-hidden="true" /><span>{current.caption ?? current.alt}</span></p>
-          {multiple && <p className="sr-only">Image {activeIndex + 1} of {images.length}</p>}
-        </div>
-        {multiple && <div className="flex shrink-0 items-center gap-2">
-          <button type="button" onClick={() => step(-1)} aria-label="Previous image" className="flex size-11 items-center justify-center rounded-full border border-line text-muted transition-colors hover:border-line-strong hover:text-foreground"><ArrowLeft className="size-4" aria-hidden="true" /></button>
-          <span aria-hidden="true" className="min-w-12 text-center text-xs tabular-nums text-subtle">{activeIndex + 1} / {images.length}</span>
-          <button type="button" onClick={() => step(1)} aria-label="Next image" className="flex size-11 items-center justify-center rounded-full border border-line text-muted transition-colors hover:border-line-strong hover:text-foreground"><ArrowRight className="size-4" aria-hidden="true" /></button>
-        </div>}
-      </div>
-      {multiple && <div className="mt-4 flex gap-2 overflow-x-auto px-1 py-1" aria-label="Choose a project image">
-        {images.map((image, i) => <button key={`${i}-${image.src}`} type="button" onClick={() => goTo(i)} aria-label={`Show image ${i + 1}: ${image.caption ?? image.alt}`} aria-current={i === activeIndex ? 'true' : undefined} className={`relative h-12 w-20 shrink-0 overflow-hidden rounded-md border transition-opacity ${i === activeIndex ? 'border-accent ring-1 ring-accent' : 'border-line opacity-55 hover:opacity-100 focus-visible:opacity-100'}`}><Image src={image.src} alt="" fill sizes="80px" style={{ objectFit: 'contain', objectPosition: image.position ?? 'center' }} /></button>)}
-      </div>}
-    </section>
-      )}
+  return <section id="project-screens" className="project-carousel" aria-label={`${title} screenshots`} aria-roledescription="carousel" onKeyDown={keyboard} tabIndex={0}>
+    <div className="project-carousel-toolbar">      <button ref={expandButton} type="button" className="project-carousel-expand" onClick={() => setExpanded(true)} aria-label="Enlarge screenshot"><Expand size={16} aria-hidden="true" /><span>Enlarge</span></button>
+      <span className="project-carousel-format">{presentation === 'mobile' ? <Smartphone size={13} aria-hidden="true" /> : <Monitor size={13} aria-hidden="true" />}{presentation === 'artwork' ? 'Project cover' : presentation === 'mobile' ? 'Mobile screen' : presentation === 'desktop' ? 'Desktop screen' : 'Web screen'}</span>
     </div>
-  );
+    <div className="project-carousel-stage" data-presentation={presentation} style={{ touchAction: 'pan-y' }}
+      onPointerDown={event => {
+        if (!event.isPrimary || event.button !== 0 || (event.target as HTMLElement).closest('button')) return;
+        pointer.current = { x: event.clientX, y: event.clientY };
+        event.currentTarget.setPointerCapture(event.pointerId);
+      }}
+      onPointerUp={event => {
+        const start = pointer.current; pointer.current = null;
+        if (start && Math.abs(event.clientX - start.x) > 45 && Math.abs(event.clientX - start.x) > Math.abs(event.clientY - start.y)) step(event.clientX < start.x ? 1 : -1);
+      }} onPointerCancel={() => { pointer.current = null; }} onLostPointerCapture={() => { pointer.current = null; }}>
+      <div className="project-carousel-frame" data-presentation={presentation} style={presentation === 'mobile' && naturalWidth && naturalHeight ? { aspectRatio: `${naturalWidth} / ${naturalHeight}` } : undefined}>
+        <div className="project-carousel-screen">{image(false)}</div>
+      </div>
+
+    </div>
+    <div className="project-carousel-meta">
+      <p aria-live="polite" aria-atomic="true"><span className="project-carousel-count">{index + 1} / {images.length}</span>{caption}</p>
+      {multiple && <div className="project-carousel-arrows"><button type="button" onClick={() => step(-1)} aria-label="Previous screenshot"><ArrowLeft size={17} /></button><button type="button" onClick={() => step(1)} aria-label="Next screenshot"><ArrowRight size={17} /></button></div>}
+    </div>
+    {multiple && <div className="project-carousel-thumbnails" role="group" aria-label="Choose screenshot">
+      {images.map((item, i) => <button key={`${item.src}-${i}`} ref={element => { thumbnails.current[i] = element; }} type="button" onClick={() => setIndex(i)} aria-label={`Show screenshot ${i + 1}: ${item.alt}`} aria-current={index === i ? 'true' : undefined}><Image src={item.src} alt="" fill unoptimized sizes="84px" style={{ objectFit: 'contain' }} /><span>{i + 1}</span></button>)}
+    </div>}
+    {expanded && <dialog ref={dialog} className="project-lightbox" aria-label={`${title} enlarged screenshots`} data-lenis-prevent onCancel={event => { event.preventDefault(); setExpanded(false); }} onClick={event => { if (event.target === event.currentTarget) setExpanded(false); }}>
+      <div className="project-lightbox-content"><div className="project-lightbox-heading"><span>{title} &middot; {index + 1} / {images.length}</span><button type="button" onClick={() => setExpanded(false)} aria-label="Close enlarged screenshot"><X size={20} /></button></div><div className="project-lightbox-image">{image(true)}</div><div className="project-lightbox-footer"><button type="button" onClick={() => step(-1)} disabled={!multiple} aria-label="Previous enlarged screenshot"><ArrowLeft size={18} /></button><p>{caption}</p><button type="button" onClick={() => step(1)} disabled={!multiple} aria-label="Next enlarged screenshot"><ArrowRight size={18} /></button></div></div>
+    </dialog>}
+  </section>;
 }

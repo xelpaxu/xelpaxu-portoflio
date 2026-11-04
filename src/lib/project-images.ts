@@ -11,6 +11,9 @@ export function getProjectImages(project: Pick<Project, 'images' | 'title' | 'im
       caption: 'caption' in entry ? entry.caption : project.imageLabel,
       fit: 'fit' in entry ? entry.fit : project.imageFit,
       position: 'position' in entry ? entry.position : project.imagePosition,
+      presentation: 'presentation' in entry ? entry.presentation : undefined,
+      width: 'width' in entry ? entry.width : undefined,
+      height: 'height' in entry ? entry.height : undefined,
     }];
   });
 }

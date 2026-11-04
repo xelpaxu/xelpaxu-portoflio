@@ -20,10 +20,14 @@ export interface ProjectImage {
   caption?: string;
   fit?: 'cover' | 'contain';
   position?: string;
+  presentation?: 'web' | 'mobile' | 'desktop' | 'artwork';
+  width?: number;
+  height?: number;
 }
 
 export interface Project {
   id: string;
+  platform?: 'web' | 'mobile' | 'desktop' | 'mixed';
   imageLabel?: string;
   imagePosition?: string;
   imageFit?: 'cover' | 'contain';

@@ -59,7 +59,13 @@ const projectEntries: Project[] = [
     "id": "visaia",
     "title": "VISAIA",
     "images": [
-      "/assets/projects/visaia.svg"
+      "/assets/projects/vsiaia (1).png",
+      "/assets/projects/vsiaia (2).png",
+      "/assets/projects/vsiaia (3).png",
+      "/assets/projects/vsiaia (4).png",
+      "/assets/projects/vsiaia (5).png",
+      "/assets/projects/vsiaia (6).png",
+      "/assets/projects/vsiaia (7).png",
     ],
     "imageLabel": "Project artwork",
     "description": "A mobile farm-management and pest-monitoring app with field mapping, crop cycles, activity logs, and image-based pest detection.",
