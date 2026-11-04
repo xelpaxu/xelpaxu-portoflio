@@ -204,15 +204,13 @@ export default function StartupReveal() {
           <span key={word} lang={greetings[word].lang} className="startup-word" data-effect={greetings[word].effect}>{text}{greetings[word].effect === 'typing' && <span className="startup-caret" />}</span>
         </div>
         {exiting && <button type="button" className="startup-enter" onClick={enterPortfolio}>Enter portfolio<span aria-hidden="true">&rarr;</span></button>}
-      {exiting && (
-        <div className="startup-enter-mingkay" aria-hidden="true"
+        <div className="startup-enter-mingkay" data-clicking={exiting} aria-hidden="true"
           onAnimationStart={event => {
             if (event.animationName === 'startup-paw-press') enterPortfolio();
           }}>
           <span className="startup-mingkay-sprite" />
-          <span className="startup-paw-press" />
+          {exiting && <span className="startup-paw-press" />}
         </div>
-      )}
       </div>
     </div>
   );

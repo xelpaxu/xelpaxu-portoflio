@@ -150,7 +150,7 @@ body { isolation: isolate; }
 .startup-enter {
   position: absolute;
   left: 50%;
-  top: calc(50% + 30px);
+  top: calc(50% - 16px);
   transform: translateX(-50%);
   display: inline-flex;
   align-items: center;
@@ -164,18 +164,17 @@ body { isolation: isolate; }
   color: var(--strong);
   font-size: 12px;
   white-space: nowrap;
-  animation: startup-enter-press 4300ms ease both;
+  animation: startup-enter-appear 300ms ease both;
 }
 .startup-enter-mingkay {
   position: absolute;
   z-index: 10000;
-  left: calc(50% + 42px);
-  top: calc(50% - 2px);
+  left: calc(50% - 16px);
+  top: calc(50% - 48px);
   width: 32px;
   height: 32px;
   pointer-events: none;
   filter: drop-shadow(0 2px 3px rgb(0 0 0 / 15%));
-  animation: startup-mingkay-arrive 4300ms linear both;
 }
 .startup-mingkay-sprite {
   display: block;
@@ -184,45 +183,25 @@ body { isolation: isolate; }
   background: url('/assets/neko/neko.png') no-repeat;
   background-size: 256px 128px;
   image-rendering: pixelated;
-  background-position: -32px 0;
-  animation: startup-mingkay-walk 250ms step-end 12, startup-mingkay-tap 1300ms step-end 3000ms forwards;
+  background-position: -160px 0;
+  animation: startup-mingkay-scratch 280ms step-end infinite;
 }
 .startup-paw-press {
   position: absolute;
-  top: 16px;
-  left: -6px;
-  width: 30px;
-  height: 30px;
+  top: 28px;
+  left: 8px;
+  width: 16px;
+  height: 16px;
   border: 1px solid var(--foreground);
   border-radius: 50%;
   opacity: 0;
-  animation: startup-paw-press 350ms ease-out 3400ms forwards;
+  animation: startup-paw-press 350ms ease-out 700ms forwards;
 }
 @keyframes startup-soft-reveal { to { opacity: 0; transform: translateY(-8px) scale(1.015); visibility: hidden; } }
-@keyframes startup-enter-press {
-  0% { opacity: 0; transform: translate(-50%, 6px); }
-  10%, 79% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-  80% { opacity: 1; transform: translate(-50%, 0) scale(.95); }
-  84%, 100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-}
-@keyframes startup-mingkay-arrive {
-  0% { opacity: 0; transform: translate(calc(50vw - 98px), calc(50vh - 54px)); }
-  4% { opacity: 1; }
-  70%, 79% { opacity: 1; transform: translate(0, 0); }
-  80% { opacity: 1; transform: translateY(2px) scaleY(.93); }
-  84%, 93% { opacity: 1; transform: translateY(0) scaleY(1); }
-  100% { opacity: 0; transform: translateY(0); }
-}
-@keyframes startup-mingkay-walk {
-  0%, 100% { background-position: -32px 0; }
-  50% { background-position: -32px -32px; }
-}
-@keyframes startup-mingkay-tap {
-  0% { background-position: -96px -96px; }
-  30.77% { background-position: -160px 0; }
-  36% { background-position: -192px 0; }
-  50%, 100% { background-position: -96px -96px; }
-}
+.startup-enter-mingkay[data-clicking="true"] .startup-mingkay-sprite { animation: startup-mingkay-click 1000ms step-end both; }
+@keyframes startup-enter-appear { from { opacity: 0; } to { opacity: 1; } }
+@keyframes startup-mingkay-scratch { 0%, 100% { background-position: -160px 0; } 50% { background-position: -192px 0; } }
+@keyframes startup-mingkay-click { 0%, 65% { background-position: -96px -96px; } 70%, 90% { background-position: -192px -96px; } 100% { background-position: -96px -96px; } }
 @keyframes startup-paw-press {
   from { opacity: .4; transform: scale(.4); }
   to { opacity: 0; transform: scale(1.6); }
@@ -433,3 +412,4 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
 .blog-prose hr { margin: 2rem 0; border-color: var(--line); }
 .blog-prose.ProseMirror:focus-visible { outline: 2px solid var(--muted); outline-offset: -3px; border-radius: .75rem; }
 .blog-prose .ProseMirror-selectednode { outline: 2px solid var(--accent); outline-offset: 3px; }
+
