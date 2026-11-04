@@ -4,6 +4,7 @@ import { projectCaseStudies } from './case-studies';
 const projectEntries: Project[] = [
   {
     "id": "vecpro",
+    "role": "Full-stack developer",
     "title": "VECPRO",
     "images": [
       "/assets/projects/aedify.png",
@@ -57,6 +58,7 @@ const projectEntries: Project[] = [
   },
   {
     "id": "visaia",
+    "role": "Full-stack developer",
     "title": "VISAIA",
     "images": [
       "/assets/projects/vsiaia (1).png",
@@ -88,6 +90,7 @@ const projectEntries: Project[] = [
   },
   {
     "id": "visaia-dashboard",
+    "role": "Full-stack developer",
     "title": "VISAIA Dashboard",
     "images": [
       "/assets/projects/vdashb.png",
@@ -117,6 +120,7 @@ const projectEntries: Project[] = [
   },
   {
     "id": "amogus",
+    "role": "Full-stack developer",
     "title": "Amogus",
     "images": [
       "/assets/projects/amogus.png",
@@ -148,6 +152,7 @@ const projectEntries: Project[] = [
   },
   {
     "id": "encast",
+    "role": "Full-stack developer",
     "title": "enCast",
     "images": [
       "/assets/projects/encast.svg"
@@ -172,6 +177,7 @@ const projectEntries: Project[] = [
   },
   {
     "id": "memowee",
+    "role": "Full-stack developer",
     "title": "Memowee",
     "images": [
       "/assets/projects/memowee.png",
@@ -199,6 +205,7 @@ const projectEntries: Project[] = [
   },
   {
     "id": "nexacare",
+    "role": "Full-stack developer",
     "title": "NexaCare",
     "images": [
       "/assets/projects/nexacare.svg"
@@ -223,6 +230,7 @@ const projectEntries: Project[] = [
   },
   {
     "id": "revia",
+    "role": "Full-stack developer",
     "title": "Revia",
     "images": [
       "/assets/projects/revia.svg"
@@ -249,6 +257,7 @@ const projectEntries: Project[] = [
   },
   {
     "id": "vertex-realty",
+    "role": "Full-stack developer",
     "title": "Vertex Realty",
     "images": [
       "/assets/projects/vertex-realty.svg"
@@ -273,6 +282,7 @@ const projectEntries: Project[] = [
   },
   {
     "id": "cictzone",
+    "role": "Full-stack developer",
     "title": "CICTZONE",
     "images": [
       "/assets/projects/cictzone.svg"
@@ -298,6 +308,7 @@ const projectEntries: Project[] = [
   },
   {
     "id": "bigbrew-pos",
+    "role": "Full-stack developer",
     "title": "BigBrew POS",
     "images": [
       "/assets/projects/bigbrew-pos.svg"

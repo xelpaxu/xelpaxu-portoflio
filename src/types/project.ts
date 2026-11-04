@@ -27,6 +27,7 @@ export interface ProjectImage {
 
 export interface Project {
   id: string;
+  role?: string;
   platform?: 'web' | 'mobile' | 'desktop' | 'mixed';
   imageLabel?: string;
   imagePosition?: string;
