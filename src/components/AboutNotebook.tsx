@@ -7,7 +7,10 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight, CornerDownLeft, MessageCircle, RotateCcw } from 'lucide-react';
 import { profile } from '@/data/profile';
 import AboutLikeButton from '@/components/AboutLikeButton';
+import dynamic from 'next/dynamic';
 import { useContact } from './ContactProvider';
+
+const IloiloMap = dynamic(() => import('./IloiloMap'), { ssr: false, loading: () => <div className="iloilo-map-loading" role="status">Opening my corner of the world?</div> });
 
 const questions = [
   {
@@ -26,6 +29,11 @@ const questions = [
     link: '/projects/memowee', label: 'See the experiment', aside: 'Learning by trying things out.',
   },
   {
+    question: 'Where do you live?',
+    answer: 'I call Iloilo City, Philippines home.',
+    map: true,
+  },
+  {
     question: 'Can we build something?',
     answer: 'A project idea, an opportunity, or something you’re figuring out? Let’s talk.',
     link: `mailto:${profile.email}`, label: 'Start a conversation', aside: 'Your question can be the next one.',
@@ -38,6 +46,7 @@ export default function AboutNotebook() {
   const [pending, setPending] = useState(false);
   const [visited, setVisited] = useState<number[]>([0]);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const answer = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
   const current = questions[selected];
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
@@ -45,6 +54,7 @@ export default function AboutNotebook() {
   function ask(index: number) {
     if (index === selected && !pending) return;
     if (timer.current) clearTimeout(timer.current);
+    if (answer.current) answer.current.scrollTop = 0;
     setSelected(index);
     setVisited(previous => previous.includes(index) ? previous : [...previous, index]);
     setPending(!reducedMotion);
@@ -53,6 +63,7 @@ export default function AboutNotebook() {
   function reset() {
     if (timer.current) clearTimeout(timer.current);
     setPending(false);
+    if (answer.current) answer.current.scrollTop = 0;
     setSelected(0);
     setVisited([0]);
   }
@@ -80,14 +91,16 @@ export default function AboutNotebook() {
             <div className="relative size-10 shrink-0 overflow-hidden rounded-full ring-1 ring-accent/30"><Image src="/assets/profile_xelpaxu.jpg" alt="" fill sizes="40px" className="object-cover" /></div>
             <div><p className="text-sm font-medium">Axel</p><p className="mt-0.5 text-[11px] text-subtle">A few quick answers</p></div>
           </div>
-          <div id="about-answer" role="region" aria-label={`Axel’s answer: ${current.question}`} aria-live="polite" aria-busy={pending} className="min-h-[210px]">
+          <div ref={answer} id="about-answer" role="region" aria-label={`Axel’s answer: ${current.question}`} aria-live="polite" aria-busy={pending} className="h-[210px] overflow-y-auto overscroll-contain">
             <AnimatePresence mode="wait" initial={false}>
               {pending ? <motion.div key="thinking" aria-hidden="true" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex h-14 items-center gap-1.5">
                 {[0, 1, 2].map(index => <motion.span key={index} className="size-1.5 rounded-full bg-accent" animate={{ y: [0, -4, 0], opacity: [0.4, 1, 0.4] }} transition={{ duration: 0.6, repeat: Infinity, delay: index * 0.1 }} />)}
-              </motion.div> : <motion.div key={selected} initial={{ opacity: 0, y: reducedMotion ? 0 : 10, filter: reducedMotion ? 'none' : 'blur(3px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0 }} transition={{ duration: reducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}>
-                <p className="text-lg leading-8 tracking-tight text-strong">{current.answer}</p>
-                <p className="mt-4 text-xs leading-6 text-muted">{current.aside}</p>
-                <Link href={current.link} onClick={event => { if (current.link?.startsWith('mailto:')) { event.preventDefault(); openContact(); } }} className="mt-4 inline-flex min-h-11 items-center gap-2 text-xs font-medium text-accent hover:underline">{current.label}<ArrowUpRight className="size-3.5" aria-hidden="true" /></Link>
+              </motion.div> : <motion.div key={selected} className="h-full" initial={{ opacity: 0, y: reducedMotion ? 0 : 10, filter: reducedMotion ? 'none' : 'blur(3px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0 }} transition={{ duration: reducedMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}>
+                {'map' in current && current.map ? <IloiloMap /> : <>
+                  <p className="text-lg leading-8 tracking-tight text-strong">{current.answer}</p>
+                  {'aside' in current && <p className="mt-4 text-xs leading-6 text-muted">{current.aside}</p>}
+                  {current.link && <Link href={current.link} onClick={event => { if (current.link?.startsWith('mailto:')) { event.preventDefault(); openContact(); } }} className="mt-4 inline-flex min-h-11 items-center gap-2 text-xs font-medium text-accent hover:underline">{current.label}<ArrowUpRight className="size-3.5" aria-hidden="true" /></Link>}
+                </>}
               </motion.div>}
             </AnimatePresence>
           </div>
