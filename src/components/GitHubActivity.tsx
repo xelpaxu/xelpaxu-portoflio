@@ -73,9 +73,6 @@ export default function GitHubActivity() {
             </div>
             <ContributionCalendar days={days} offset={offset} weeks={weeks} months={months} inspectedDate={inspectedDay?.date} highlightedDates={new Set(days.filter(day => day.date <= today && (selectedMonth === 'all' || day.date.startsWith(selectedMonth))).map(day => day.date))} onSelect={date => { if (date <= today && (selectedMonth === 'all' || date.startsWith(selectedMonth))) setSelectedDate(date); }} />
             <div className="mt-3 flex items-center justify-between gap-3 text-xs text-subtle"><span>Past year · Public GitHub activity</span><span className="flex items-center gap-1.5">Less{levels.map(color => <span key={color} className="size-2.5 rounded-[3px]" style={{ background: color }} />)}More</span></div>
-            <div className="mt-4 flex min-h-11 flex-wrap items-center justify-between gap-2 border-t border-line pt-3 text-xs">
-              {inspectedDay ? <><span className="text-strong">{new Date(`${inspectedDay.date}T12:00:00Z`).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}</span><span className="flex items-center gap-2 text-muted"><span className="size-2 rounded-full" style={{ background: levels[inspectedDay.level] }} />{activityLabels[inspectedDay.level]} activity</span></> : <span className="text-subtle">Hover or tap a contribution to see its activity.</span>}
-            </div>
           </>
         ) : <p role="status" className="py-8 text-center text-sm text-muted">Activity is temporarily unavailable. <a className="underline underline-offset-4" href={`https://github.com/${profile.github}`}>View it on GitHub</a>.</p>}
       </div>
