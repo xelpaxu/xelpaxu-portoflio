@@ -478,3 +478,11 @@ html[data-theme="light"] .iloilo-map-tiles { filter: saturate(.5); }
 .iloilo-map button:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
 @media (prefers-reduced-motion: reduce) { .iloilo-marker-ping { animation: none !important; } }
 
+.site-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 30px; margin-top: 64px; padding-top: 22px; border-top: 1px solid var(--line); }
+.site-footer-identity { display: flex; flex-direction: column; gap: 5px; font-size: 11px; }
+.site-footer-identity > span:first-child { color: var(--strong); }
+.site-footer-identity > span:last-child { color: var(--subtle); }
+.site-footer nav { display: flex; flex-wrap: wrap; gap: 5px 20px; }
+.site-footer nav a, .site-footer nav button { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; color: var(--muted); font-size: 11px; cursor: pointer; }
+.site-footer nav a:hover, .site-footer nav button:hover { color: var(--accent); }
+.site-footer a:focus-visible, .site-footer button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }

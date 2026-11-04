@@ -1,3 +1,4 @@
+import SiteFooter from '@/components/SiteFooter';
 import AboutNotebook from '@/components/AboutNotebook';
 import HeroSidebar from '@/components/HeroSidebar';
 import Navbar from '@/components/Navbar';
@@ -42,7 +43,7 @@ export default function HomePage() {
                 <ContactSection />
               </section>
             </div>
-            <footer className="mt-14 flex flex-wrap justify-between gap-3 border-t border-line pt-6 text-xs text-subtle"><span>Axel John Nuqui</span><span>Iloilo City, Philippines</span></footer>
+            <SiteFooter />
           </div>
         </div>
       </main>
