@@ -24,6 +24,17 @@ export const testimonials: Testimonial[] = [
     image: '/assets/testimonials/alex.svg',
     sample: true,
   },
+    {
+    id: 'vecpro-developerss',
+    name: 'Alex Riveras',
+    role: 'Frontend developer - Sample profile',
+    relationship: 'co-developer',
+    quote: 'Working together felt straightforward. We asdasdadasadasdscould talk through an idea, split up the work, and help each other get the details right.',
+    projectId: 'vecpro',
+    featured: true,
+    image: '/assets/testimonials/alex.svg',
+    sample: true,
+  },
   {
     id: 'vecpro-user',
     name: 'Sam Reyes',
