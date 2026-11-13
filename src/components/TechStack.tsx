@@ -1,54 +1,43 @@
-import { SiNextdotjs, SiNodedotjs, SiReact, SiTypescript, SiYoutube, SiDocker, SiPython, SiDjango, SiPostgresql, SiMongodb, SiExpress, SiFigma, SiTailwindcss, SiFlutter, SiDart, SiFirebase, SiExpo, SiSocketdotio, SiThreedotjs, SiFastapi, SiTensorflow, SiJavascript, SiMysql, SiSupabase, SiFramer, SiLeaflet } from 'react-icons/si';
-import { Library, QrCode } from 'lucide-react';
-import { SiGithub, SiVercel } from 'react-icons/si';
-import type { IconType } from 'react-icons';
-import Image from 'next/image';
+'use client';
 
-const technologies: Record<string, { icon: IconType; label: string; color?: string }> = {
-  GitHub: { icon: SiGithub, label: 'GitHub' },
-  Vercel: { icon: SiVercel, label: 'Vercel' },
-  TS: { icon: SiTypescript, label: 'TypeScript', color: '#3178c6' },
-  TypeScript: { icon: SiTypescript, label: 'TypeScript', color: '#3178c6' },
-  'Node.js': { icon: SiNodedotjs, label: 'Node.js', color: '#5fa04e' },
-  React: { icon: SiReact, label: 'React', color: '#149eca' },
-  'Next.js': { icon: SiNextdotjs, label: 'Next.js' },
-  YouTube: { icon: SiYoutube, label: 'YouTube', color: '#ff0033' },
-  Docker: { icon: SiDocker, label: 'Docker', color: '#2496ed' },
-  Python: { icon: SiPython, label: 'Python', color: '#4584b6' },
-  Django: { icon: SiDjango, label: 'Django' },
-  PostgreSQL: { icon: SiPostgresql, label: 'PostgreSQL', color: '#527fa5' },
-  MongoDB: { icon: SiMongodb, label: 'MongoDB', color: '#47a248' },
-  Express: { icon: SiExpress, label: 'Express' },
-  Figma: { icon: SiFigma, label: 'Figma', color: '#a259ff' },
-  'Tailwind CSS': { icon: SiTailwindcss, label: 'Tailwind CSS', color: '#06b6d4' },
-  Flutter: { icon: SiFlutter, label: 'Flutter', color: '#42a5f5' },
-  Dart: { icon: SiDart, label: 'Dart', color: '#13b9fd' },
-  Firebase: { icon: SiFirebase, label: 'Firebase', color: '#f59d00' },
-  Expo: { icon: SiExpo, label: 'Expo' },
-  'React Native': { icon: SiReact, label: 'React Native', color: '#149eca' },
-  'Socket.io': { icon: SiSocketdotio, label: 'Socket.IO' },
-  'Three.js': { icon: SiThreedotjs, label: 'Three.js' },
-  FastAPI: { icon: SiFastapi, label: 'FastAPI', color: '#009688' },
-  TensorFlow: { icon: SiTensorflow, label: 'TensorFlow', color: '#ff8f00' },
-  JavaScript: { icon: SiJavascript, label: 'JavaScript', color: '#c5a800' },
-  MySQL: { icon: SiMysql, label: 'MySQL', color: '#4486a1' },
-  Supabase: { icon: SiSupabase, label: 'Supabase', color: '#3ecf8e' },
-  'Framer Motion': { icon: SiFramer, label: 'Framer Motion' },
-  Leaflet: { icon: SiLeaflet, label: 'Leaflet', color: '#66a040' },
+import { motion } from 'framer-motion';
+import TechnologyLogo from '@/components/TechnologyLogo';
+import InteractiveStackLogo from '@/components/InteractiveStackLogo';
+import { getTechnology } from '@/lib/technology-logos';
 
-};
-
-const localLogos: Record<string, string> = { Convex: '/assets/logos/convex.svg', Flet: '/assets/logos/flet.svg' };
-
-export default function TechStack({ tags, iconOnly = false }: { tags: string[]; iconOnly?: boolean }) {
-  return <ul aria-label="Technologies" className={`flex flex-wrap items-center gap-y-3 ${iconOnly ? 'gap-x-4' : 'gap-x-5'}`}>
-    {tags.map(tag => {
-      const technology = technologies[tag];
-      const Icon = technology?.icon ?? (tag === 'QR' ? QrCode : Library);
-      return <li key={tag} title={technology?.label ?? tag} className="inline-flex items-center gap-2 text-xs text-muted">
-        {localLogos[tag] ? <Image src={localLogos[tag]} alt="" width={18} height={18} className="size-[18px] shrink-0 object-contain" /> : <Icon aria-hidden="true" className={`${iconOnly ? 'size-[18px]' : 'size-4'} shrink-0`} style={technology?.color ? { color: technology.color } : undefined} />}
-        <span className={iconOnly ? 'sr-only' : undefined}>{technology?.label ?? tag}</span>
-      </li>;
+export default function TechStack({ tags, iconOnly = false, animated = false, interactive = false, goTo = [] }: {
+  tags: string[];
+  iconOnly?: boolean;
+  animated?: boolean;
+  interactive?: boolean;
+  goTo?: string[];
+}) {
+  return <motion.ul aria-label="Technologies" className={`flex flex-wrap items-center gap-y-3 ${iconOnly ? 'gap-x-4' : 'gap-x-5'}`}
+    variants={animated ? {
+      visible: { transition: { staggerChildren: 0.018, delayChildren: 0.02 } },
+      exit: { transition: { staggerChildren: 0.005, staggerDirection: -1 } },
+    } : undefined}>
+    {tags.map((tag, index) => {
+      const technology = getTechnology(tag);
+      const preferred = goTo.includes(tag);
+      const logo = <TechnologyLogo key={technology.src ?? tag} src={technology.src} monochrome={technology.monochrome} qr={tag === 'QR'} className={`${iconOnly ? 'size-[18px]' : 'size-4'} shrink-0`} />;
+      const displayLogo = interactive ? <InteractiveStackLogo preferred={preferred}>{logo}</InteractiveStackLogo> : logo;
+      return <motion.li key={tag} title={preferred ? `${technology.label} — Go-to choice for new projects` : technology.label} className="inline-flex items-center gap-2 text-xs text-muted"
+        variants={animated ? { hidden: {}, visible: {}, exit: {} } : undefined}>
+        {animated ? <motion.span className="stack-logo" variants={{
+          hidden: { opacity: 0, scale: 0.45, rotate: index % 2 ? 14 : -14, y: 14 },
+          visible: { opacity: 1, scale: 1, rotate: 0, y: 0, transition: { type: 'spring', stiffness: 380, damping: 21, mass: 0.65 } },
+          exit: { opacity: 0, scale: 0.65, rotate: index % 2 ? -12 : 12, y: -8, transition: { duration: 0.12 } },
+        }}>{displayLogo}</motion.span> : displayLogo}
+        <motion.span className={iconOnly ? 'sr-only' : undefined} variants={animated ? {
+          hidden: { opacity: 0, y: 5 },
+          visible: { opacity: 1, y: 0, transition: { duration: 0.18, delay: 0.05 } },
+          exit: { opacity: 0, transition: { duration: 0.08 } },
+        } : undefined}>
+          {technology.label}
+          {preferred && <span className="sr-only"> — Go-to choice for new projects</span>}
+        </motion.span>
+      </motion.li>;
     })}
-  </ul>;
+  </motion.ul>;
 }
