@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from '@/components/ThemeProvider';
 import NekoCompanion from '@/components/NekoCompanion';
@@ -15,6 +16,12 @@ const hankenGrotesk = localFont({
   weight: "300 800",
   display: "swap",
   variable: "--font-hanken",
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-jakarta",
 });
 
 export const metadata: Metadata = {
@@ -33,7 +40,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: `var systemTheme=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=systemTheme;try{var savedTheme=localStorage.getItem('portfolio-theme');document.documentElement.dataset.theme=['light','dark'].includes(savedTheme)?savedTheme:systemTheme;var accent=localStorage.getItem('portfolio-accent');document.documentElement.dataset.accent=['default','violet','blue','mint','rose','amber'].includes(accent)?accent:'default'}catch{document.documentElement.dataset.accent='default'}` }} />
       </head>
       <body
-        className={`${hankenGrotesk.className} ${hankenGrotesk.variable} bg-page text-foreground antialiased`}
+        className={`${hankenGrotesk.className} ${hankenGrotesk.variable} ${plusJakartaSans.variable} bg-page text-foreground antialiased`}
       >
           <ThemeProvider><ContactProvider><SmoothScrolling /><ShaderBackground /><GrainOverlay />{children}<NekoCompanion /></ContactProvider></ThemeProvider>
           <StartupReveal /><ClickBurst />
