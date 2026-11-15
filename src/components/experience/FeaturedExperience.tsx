@@ -25,7 +25,7 @@ export default function FeaturedExperience({
   description,
   notes
 }: FeaturedExperienceProps) {
-  const [logoFailed, setLogoFailed] = useState(false);
+  const [logoFailed, setLogoFailed] = useState(!logo);
   const [localExpanded, setLocalExpanded] = useState(card);
   const isExpanded = expanded ?? localExpanded;
   const reducedMotion = useReducedMotion();
@@ -81,7 +81,7 @@ export default function FeaturedExperience({
 
           <div className="flex flex-col items-start gap-1 pl-16 sm:items-end sm:pl-0 sm:flex-shrink-0">
             <span className="text-sm text-muted whitespace-nowrap">
-              {startDate} - {endDate}
+              {[startDate, endDate].filter(Boolean).join(' - ')}
             </span>
             {location && (
               <span className="text-xs text-subtle">

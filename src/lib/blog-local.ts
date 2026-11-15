@@ -46,6 +46,7 @@ function validateContent(input: unknown): BlogNode {
       clean.content = node.content.map(child => visit(child, depth + 1));
     }
     if (node.type === 'heading') clean.attrs = { level: node.attrs?.level === 3 ? 3 : 2 };
+    if (node.type === 'codeBlock') clean.attrs = { language: typeof node.attrs?.language === 'string' && /^[a-z0-9+#-]{1,40}$/i.test(node.attrs.language) ? node.attrs.language : 'plaintext' };
     if (node.type === 'orderedList') clean.attrs = { start: Number.isSafeInteger(node.attrs?.start) ? Math.max(1, Number(node.attrs?.start)) : 1 };
     if (node.type === 'image') {
       const src = safeBlogUrl(node.attrs?.src, true);

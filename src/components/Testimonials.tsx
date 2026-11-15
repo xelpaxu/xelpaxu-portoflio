@@ -4,15 +4,15 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Quote } from 'lucide-react';
-import { testimonials } from '@/data/testimonials';
+import { testimonials, getTestimonialProjectIds, testimonialRelationshipLabels } from '@/data/testimonials';
 import { projects } from '@/data/projects/projects';
 import { profile } from '@/data/profile';
 
 export default function Testimonials({ projectId }: { projectId?: string }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const entries = testimonials.filter(item =>
-    projects.some(project => project.id === item.projectId) &&
-    (projectId ? item.projectId === projectId : item.featured),
+    projects.some(project => getTestimonialProjectIds(item).includes(project.id)) &&
+    (projectId ? getTestimonialProjectIds(item).includes(projectId) : item.featured),
   );
   const currentIndex = entries.length ? activeIndex % entries.length : 0;
   const visibleEntries = projectId ? entries : entries.slice(currentIndex, currentIndex + 1);
@@ -21,7 +21,7 @@ export default function Testimonials({ projectId }: { projectId?: string }) {
 
   if (!entries.length) return (
     <div className="border-t border-line py-6">
-      <p className="text-sm leading-7 text-muted">{projectId ? 'Feedback from co-developers and users will appear here.' : 'A space for feedback from the people I build with.'}</p>
+      <p className="text-sm leading-7 text-muted">{projectId ? 'Feedback from collaborators, users, teachers, and professors will appear here.' : 'A space for feedback from the people I build with.'}</p>
       <a href={`mailto:${profile.email}?subject=${encodeURIComponent(subject)}`} className="mt-2 inline-flex min-h-11 items-center gap-2 text-xs font-medium text-accent hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
         {projectId ? 'Worked on or used this project? Share your experience' : 'Worked together? Share your experience'}
         <ArrowUpRight className="size-3.5 shrink-0" aria-hidden="true" />
@@ -33,7 +33,7 @@ export default function Testimonials({ projectId }: { projectId?: string }) {
     <div>
     <div className={projectId ? 'grid gap-x-8 gap-y-7 sm:grid-cols-2' : 'min-w-0'} aria-live={projectId ? undefined : 'polite'} aria-atomic={projectId ? undefined : true}>
       {visibleEntries.map(item => {
-        const relatedProject = projects.find(project => project.id === item.projectId)!;
+        const relatedProjects = projects.filter(project => getTestimonialProjectIds(item).includes(project.id));
         return (
           <figure key={item.id} className="min-w-0 border-t border-line pt-5">
             <div className="mb-4 flex items-center justify-between gap-3">
@@ -46,10 +46,10 @@ export default function Testimonials({ projectId }: { projectId?: string }) {
               <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="text-sm font-medium">{item.name}</span>
-                <span className="text-xs text-muted">{item.relationship === 'co-developer' ? 'Co-developer' : 'User'}</span>
+                <span className="text-xs text-muted">{testimonialRelationshipLabels[item.relationship]}</span>
               </div>
               <p className="mt-1 text-xs leading-6 text-muted">{item.role}</p>
-              {!projectId && <Link href={relatedProject.link} className="mt-1 inline-flex min-h-11 items-center gap-1.5 text-xs text-accent hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">{relatedProject.title}<ArrowUpRight className="size-3" aria-hidden="true" /></Link>}
+              {!projectId && relatedProjects.map(relatedProject => <Link key={relatedProject.id} href={relatedProject.link} className="mt-1 inline-flex min-h-11 items-center gap-1.5 text-xs text-accent hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">{relatedProject.title}<ArrowUpRight className="size-3" aria-hidden="true" /></Link>)}
               </div>
             </figcaption>
           </figure>

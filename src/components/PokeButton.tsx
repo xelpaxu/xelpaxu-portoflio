@@ -39,7 +39,7 @@ export default function PokeButton({ children }: { children: ReactNode }) {
       const distance = Math.hypot(step.clientX - rect.left - rect.width / 2, step.clientY - rect.top - rect.height / 2);
       const moving = previous !== undefined && Math.hypot(step.clientX - previous.clientX, step.clientY - previous.clientY) > 0.5;
       previous = step;
-      if (document.querySelector('.startup-stage') || rect.bottom <= 0 || rect.top >= window.innerHeight || !rect.width) {
+      if (document.querySelector('.startup-reveal:not([hidden])') || rect.bottom <= 0 || rect.top >= window.innerHeight || !rect.width) {
         touching = distance <= radius;
         return;
       }

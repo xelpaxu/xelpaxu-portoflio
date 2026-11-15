@@ -2,7 +2,10 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
-import { useEditor, EditorContent, useEditorState } from '@tiptap/react';
+import { useEditor, EditorContent, useEditorState, ReactNodeViewRenderer } from '@tiptap/react';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import { codeHighlighter } from '@/lib/blog-code';
+import CodeBlockView from './CodeBlockView';
 import StarterKit from '@tiptap/starter-kit';
 import ImageExtension from '@tiptap/extension-image';
 import { Bold, Italic, Underline, List, ListOrdered, Quote, Code, ImagePlus, Link as LinkIcon, Undo2, Redo2, Eye, Pencil, X, Save, Upload } from 'lucide-react';
@@ -15,6 +18,9 @@ export type BlogDraft = Pick<BlogPost, 'title' | 'slug' | 'excerpt' | 'tags' | '
 const emptyContent: BlogNode = { type: 'doc', content: [{ type: 'paragraph' }] };
 const slugify = (value: string) => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 100);
 const field = 'w-full rounded-xl border border-line bg-surface px-3 py-2.5 text-sm text-foreground placeholder:text-subtle';
+const HighlightedCodeBlock = CodeBlockLowlight.extend({
+  addNodeView() { return ReactNodeViewRenderer(CodeBlockView, { contentDOMElementTag: 'span' }); },
+}).configure({ lowlight: codeHighlighter, defaultLanguage: 'plaintext' });
 
 export default function BlogEditor({ post, revision, onSave, onClose }: {
   post?: BlogPost; revision: string;
@@ -43,7 +49,7 @@ export default function BlogEditor({ post, revision, onSave, onClose }: {
   const imageInput = useRef<HTMLInputElement>(null);
   const titleInput = useRef<HTMLInputElement>(null);
   const editor = useEditor({
-    extensions: [FontSize, StarterKit.configure({ heading: { levels: [2, 3] }, link: { openOnClick: false } }), ImageExtension.configure({ allowBase64: false })],
+    extensions: [FontSize, StarterKit.configure({ codeBlock: false, heading: { levels: [2, 3] }, link: { openOnClick: false } }), HighlightedCodeBlock, ImageExtension.configure({ allowBase64: false })],
     immediatelyRender: false,
     content: draft.content,
     editorProps: { attributes: { class: 'blog-prose min-h-72 px-5 py-6 sm:px-8', 'aria-label': 'Article body', role: 'textbox', 'aria-multiline': 'true' } },

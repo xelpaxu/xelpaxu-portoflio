@@ -6,19 +6,19 @@ import Link from "next/link";
 
 import { useState } from 'react';
 import FeaturedExperience from './FeaturedExperience';
-import { workExperiences } from '../../data/experience/work-experience';
+import { experiences, experienceLabel } from '@/data/experience/experience';
 import { education } from '../../data/experience/journey';
 
 export default function ExperienceSection({ showAll = false }: { showAll?: boolean }) {
   const [activeTab, setActiveTab] = useState<'journey' | 'experience'>('experience');
-  const [expandedRoles, setExpandedRoles] = useState<string[]>(() => showAll ? workExperiences.map(role => role.id) : []);
+  const [expandedRoles, setExpandedRoles] = useState<string[]>(() => showAll ? experiences.map(role => role.id) : []);
   
   // Get only first 3 experiences for featured section
-  const orderedExperiences = [...workExperiences].sort((a, b) => Date.parse(b.startDate) - Date.parse(a.startDate));
+  const orderedExperiences = experiences;
   const featuredExperiences = showAll ? orderedExperiences : orderedExperiences.slice(0, 3);
 
   return (
-    <section id="experience" className="scroll-mt-28 bg-transparent" aria-label="Work and education">
+    <section id="experience" className="scroll-mt-28 bg-transparent" aria-label={`${experienceLabel} and education`}>
       {/* Toggle between Journey and Experience */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="inline-flex gap-5 border-b border-line">
@@ -42,7 +42,7 @@ export default function ExperienceSection({ showAll = false }: { showAll?: boole
                 : 'border-transparent text-subtle hover:text-strong'
             }`}
           >
-            Experience
+            {experienceLabel}
           </button>
         </div>
         {activeTab === 'experience' && featuredExperiences.length > 0 && <button type="button" onClick={() => setExpandedRoles(featuredExperiences.every(role => expandedRoles.includes(role.id)) ? [] : featuredExperiences.map(role => role.id))} className="min-h-11 text-xs text-accent hover:underline">{featuredExperiences.every(role => expandedRoles.includes(role.id)) ? 'Collapse all' : 'Expand all'}</button>}
@@ -65,7 +65,7 @@ export default function ExperienceSection({ showAll = false }: { showAll?: boole
                 href="/experience"
                 className="inline-flex items-center gap-2 text-sm text-subtle transition-all hover:text-strong"
               >
-                View all experience →
+                View all {experienceLabel.toLowerCase()} →
               </Link>
             </div>
           )}

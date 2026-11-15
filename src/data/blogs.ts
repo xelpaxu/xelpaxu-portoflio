@@ -13,7 +13,7 @@ export const blogs: BlogPost[] = [
     "coverAlt": "",
     "status": "published",
     "createdAt": "2026-11-04T13:12:22.809Z",
-    "updatedAt": "2026-11-04T13:13:59.299Z",
+    "updatedAt": "2026-11-08T07:30:45.753Z",
     "publishedAt": "2026-11-04T13:12:22.809Z",
     "content": {
       "type": "doc",
@@ -44,9 +44,12 @@ export const blogs: BlogPost[] = [
           "content": [
             {
               "type": "text",
-              "text": "python' print(\"hello, world\")"
+              "text": "print(\"hello, world\")"
             }
-          ]
+          ],
+          "attrs": {
+            "language": "python"
+          }
         },
         {
           "type": "paragraph"

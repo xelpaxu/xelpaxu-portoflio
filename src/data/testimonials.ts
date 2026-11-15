@@ -2,47 +2,38 @@ export interface Testimonial {
   id: string;
   name: string;
   role: string;
-  relationship: 'co-developer' | 'user';
+  relationship: 'co-developer' | 'user' | 'teacher' | 'professor';
   quote: string;
-  projectId: string;
+  projectId: string | string[];
   featured?: boolean;
   image?: string;
   sample?: boolean;
 }
 
-// Replace these fictional samples with real feedback. Set sample to false when replaced.
+export const testimonialRelationshipLabels: Record<Testimonial['relationship'], string> = {
+  'co-developer': 'Co-developer',
+  user: 'User',
+  teacher: 'Teacher',
+  professor: 'Professor',
+};
+
+// Mark fictional sample entries with sample: true.
 // Images can be local paths under public/ (recommended) or full image URLs.
 export const testimonials: Testimonial[] = [
   {
-    id: 'vecpro-developer',
-    name: 'Alex Rivera',
-    role: 'Frontend developer - Sample profile',
+    id: 'joelmar-dev',
+    name: 'Joelmar D. Grecia',
+    role: 'Frontend developer',
     relationship: 'co-developer',
-    quote: 'Working together felt straightforward. We could talk through an idea, split up the work, and help each other get the details right.',
-    projectId: 'vecpro',
+    quote: "Working with Axel has been a great experience. He can handle tasks no matter how complex they are while managing multiple projects without compromising the quality of his work. What I appreciate most is his willingness to involve his teammates, discuss ideas, and explain technical concepts to make sure everyone understands and learns along the way. He's someone I can rely on not only to get things done but also to help the team grow and deliver quality results.",
+    projectId: ['vecpro', 'amogus', 'encast', 'memowee'],
     featured: true,
-    image: '/assets/testimonials/alex.svg',
-    sample: true,
+    image: '/assets/testimonials/joelm.png',
   },
-    {
-    id: 'vecpro-developerss',
-    name: 'Alex Riveras',
-    role: 'Frontend developer - Sample profile',
-    relationship: 'co-developer',
-    quote: 'Working together felt straightforward. We asdasdadasadasdscould talk through an idea, split up the work, and help each other get the details right.',
-    projectId: 'vecpro',
-    featured: true,
-    image: '/assets/testimonials/alex.svg',
-    sample: true,
-  },
-  {
-    id: 'vecpro-user',
-    name: 'Sam Reyes',
-    role: 'Project tester - Sample profile',
-    relationship: 'user',
-    quote: 'The layout made it easy to find my way around. I could understand the main features without needing someone to walk me through each step.',
-    projectId: 'vecpro',
-    image: '/assets/testimonials/sam.svg',
-    sample: true,
-  }
 ];
+
+// Accept single IDs, arrays, and legacy comma-separated entries.
+export function getTestimonialProjectIds(testimonial: Testimonial): string[] {
+  const values = Array.isArray(testimonial.projectId) ? testimonial.projectId : [testimonial.projectId];
+  return [...new Set(values.flatMap(value => value.split(',')).map(id => id.trim()).filter(Boolean))];
+}

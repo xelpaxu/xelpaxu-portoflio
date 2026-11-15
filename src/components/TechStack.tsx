@@ -1,9 +1,12 @@
 import { SiNextdotjs, SiNodedotjs, SiReact, SiTypescript, SiYoutube, SiDocker, SiPython, SiDjango, SiPostgresql, SiMongodb, SiExpress, SiFigma, SiTailwindcss, SiFlutter, SiDart, SiFirebase, SiExpo, SiSocketdotio, SiThreedotjs, SiFastapi, SiTensorflow, SiJavascript, SiMysql, SiSupabase, SiFramer, SiLeaflet } from 'react-icons/si';
 import { Library, QrCode } from 'lucide-react';
+import { SiGithub, SiVercel } from 'react-icons/si';
 import type { IconType } from 'react-icons';
 import Image from 'next/image';
 
 const technologies: Record<string, { icon: IconType; label: string; color?: string }> = {
+  GitHub: { icon: SiGithub, label: 'GitHub' },
+  Vercel: { icon: SiVercel, label: 'Vercel' },
   TS: { icon: SiTypescript, label: 'TypeScript', color: '#3178c6' },
   TypeScript: { icon: SiTypescript, label: 'TypeScript', color: '#3178c6' },
   'Node.js': { icon: SiNodedotjs, label: 'Node.js', color: '#5fa04e' },

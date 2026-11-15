@@ -17,7 +17,7 @@ export const GrainOverlay = () => {
       img.data[i] = v;
       img.data[i + 1] = v;
       img.data[i + 2] = v;
-      img.data[i + 3] = 10;
+      img.data[i + 3] = 255;
     }
     ctx.putImageData(img, 0, 0);
     if (overlayRef.current) overlayRef.current.style.backgroundImage = `url("${canvas.toDataURL()}")`;
@@ -33,7 +33,7 @@ export const GrainOverlay = () => {
           backgroundRepeat: 'repeat',
           backgroundSize: '128px 128px',
         }}
-        className="fixed inset-0 pointer-events-none -z-10 hidden mix-blend-multiply dark:block dark:opacity-[0.05]"
+        className="fixed inset-0 pointer-events-none z-0 block opacity-[0.06] mix-blend-multiply dark:opacity-[0.025] dark:mix-blend-normal"
       />
     </>
   );

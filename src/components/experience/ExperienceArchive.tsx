@@ -4,11 +4,11 @@ import Image from 'next/image';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { MapPin, ArrowDownRight } from 'lucide-react';
-import { workExperiences } from '@/data/experience/work-experience';
+import { experiences, experienceLabel } from '@/data/experience/experience';
 import { education } from '@/data/experience/journey';
 import TechStack from '@/components/TechStack';
 
-const roles = [...workExperiences].sort((a, b) => Date.parse(b.startDate) - Date.parse(a.startDate));
+const roles = experiences;
 const milestones = education.filter((item, i, all) => all.findIndex(other => other.title === item.title && other.date === item.date) === i)
   .sort((a, b) => Number(b.date) - Number(a.date));
 
@@ -16,11 +16,11 @@ export default function ExperienceArchive() {
   return (
     <div className="mx-auto max-w-[760px]">
       <nav aria-label="Experience sections" className="mb-10 flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm sm:mb-14">
-        <a href="#work-history" className="inline-flex min-h-11 items-center gap-2 border-b border-accent text-accent">Work experience<ArrowDownRight className="size-3.5" aria-hidden="true" /></a>
+        <a href="#work-history" className="inline-flex min-h-11 items-center gap-2 border-b border-accent text-accent">{experienceLabel}<ArrowDownRight className="size-3.5" aria-hidden="true" /></a>
         <a href="#learning-journey" className="inline-flex min-h-11 items-center gap-2 border-b border-transparent text-subtle transition-colors hover:border-line-strong hover:text-foreground">Learning journey<ArrowDownRight className="size-3.5" aria-hidden="true" /></a>
       </nav>
       <section id="work-history" aria-labelledby="work-heading" className="scroll-mt-28">
-        <h2 id="work-heading" className="sr-only">Work experience</h2>
+        <h2 id="work-heading" className="sr-only">{experienceLabel}</h2>
         {roles.length === 0 ? <PortfolioEmptyState kind="experience" /> : <ol className="divide-y divide-line border-y border-line">
           {roles.map(role => {
             const hasLogo = role.logo.startsWith('/') && existsSync(path.join(process.cwd(), 'public', role.logo));
@@ -34,7 +34,7 @@ export default function ExperienceArchive() {
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-col justify-between gap-2 sm:flex-row sm:gap-5">
                       <div><h3 className="text-xl font-semibold leading-snug tracking-tight sm:text-2xl">{role.title}</h3><p className="mt-1 text-sm font-medium text-strong sm:text-base">{role.role}</p></div>
-                      <div className="shrink-0 text-xs leading-6 text-subtle sm:pt-0.5 sm:text-right"><p>{role.startDate} - {role.endDate}</p>{role.location && <p className="flex items-center gap-1.5 sm:justify-end"><MapPin className="size-3" aria-hidden="true" />{role.location}</p>}</div>
+                      <div className="shrink-0 text-xs leading-6 text-subtle sm:pt-0.5 sm:text-right"><p>{[role.startDate, role.endDate].filter(Boolean).join(' - ')}</p>{role.location && <p className="flex items-center gap-1.5 sm:justify-end"><MapPin className="size-3" aria-hidden="true" />{role.location}</p>}</div>
                     </div>
                   </div>
                 </header>

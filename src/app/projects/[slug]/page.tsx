@@ -12,7 +12,7 @@ import ProjectGallery from '@/components/projects/ProjectGallery';
 import { getProjectImages } from '@/lib/project-images';
 import LikeButton from '@/components/LikeButton';
 import Testimonials from '@/components/Testimonials';
-import { testimonials } from '@/data/testimonials';
+import { testimonials, getTestimonialProjectIds } from '@/data/testimonials';
 import { getProjectPlatform, platformLabels } from '@/lib/project-presentation';
 import ContactButton from '@/components/ContactButton';
 import ProjectDetailTabs, { type ProjectDetailTab } from '@/components/projects/ProjectDetailTabs';
@@ -35,7 +35,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const next = projects[(index + 1) % projects.length];
   const previous = projects[(index - 1 + projects.length) % projects.length];
   const platform = getProjectPlatform(project);
-  const hasTestimonials = testimonials.some(item => item.projectId === project.id);
+  const hasTestimonials = testimonials.some(item => getTestimonialProjectIds(item).includes(project.id));
   const study = project.caseStudy;
   const features = study?.features ?? project.notes?.map(note => ({ title: note, description: '' })) ?? [];
   const detailContent = projectDetails[project.id];

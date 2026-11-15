@@ -2,6 +2,25 @@
 import { Fragment, type ReactNode } from 'react';
 import type { BlogNode } from '@/types/blog';
 import { blogFontSize, safeBlogUrl } from '@/lib/blog-content';
+import { codeHighlighter, codeLanguage, codeLanguageLabel } from '@/lib/blog-code';
+
+type HighlightNode = ReturnType<typeof codeHighlighter.highlight>['children'][number];
+function renderHighlight(node: HighlightNode, index: number): ReactNode {
+  if (node.type === 'text') return node.value;
+  if (node.type !== 'element') return null;
+  const classes = node.properties.className;
+  return <span key={index} className={Array.isArray(classes) ? classes.join(' ') : undefined}>{node.children.map((child, childIndex) => renderHighlight(child as HighlightNode, childIndex))}</span>;
+}
+
+function renderCode(node: BlogNode, index: number) {
+  const language = codeLanguage(node.attrs?.language);
+  const text = (node.content ?? []).map(child => child.text ?? '').join('');
+  const highlighted = language === 'plaintext' ? text : codeHighlighter.highlight(language, text).children.map(renderHighlight);
+  return <div key={index} className="blog-code-block">
+    <div className="blog-code-header"><span>{codeLanguageLabel(language)}</span></div>
+    <pre><code className={`language-${language}`}>{highlighted}</code></pre>
+  </div>;
+}
 
 function renderNode(node: BlogNode, index: number): ReactNode {
   if (node.type === 'text') {
@@ -36,7 +55,7 @@ function renderNode(node: BlogNode, index: number): ReactNode {
     case 'orderedList': return <ol key={index} start={typeof node.attrs?.start === 'number' ? node.attrs.start : 1}>{children}</ol>;
     case 'listItem': return <li key={index}>{children}</li>;
     case 'blockquote': return <blockquote key={index}>{children}</blockquote>;
-    case 'codeBlock': return <pre key={index}><code>{children}</code></pre>;
+    case 'codeBlock': return renderCode(node, index);
     case 'hardBreak': return <br key={index} />;
     case 'horizontalRule': return <hr key={index} />;
     case 'image': {

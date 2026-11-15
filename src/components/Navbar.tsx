@@ -61,7 +61,8 @@ export default function Navbar() {
           width: isScrolled ? 640 : 880,
         }}
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="border-line bg-surface fixed left-1/2 top-6 -translate-x-1/2 rounded-2xl border-[0.5px] shadow-navigation backdrop-blur-xl z-50 h-14 md:h-[65px] md:rounded-3xl max-w-[calc(100%_-_2rem)]"
+        data-scrolled={isScrolled}
+        className="portfolio-navbar border-line bg-surface fixed left-1/2 top-6 -translate-x-1/2 rounded-2xl border-[0.5px] shadow-navigation backdrop-blur-xl z-50 h-14 md:h-[65px] md:rounded-3xl max-w-[calc(100%_-_2rem)]"
       >
         <div className="flex h-full items-center justify-between px-2 md:px-4">
           {/* Left group - Profile, Experience, Projects */}
