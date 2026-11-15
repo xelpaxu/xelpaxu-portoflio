@@ -2,9 +2,10 @@
 
 import Image from 'next/image';
 import PokeButton from '@/components/PokeButton';
+import HeroPortrait from '@/components/HeroPortrait';
 import { profile } from '@/data/profile';
 import { useContact } from './ContactProvider';
-import { useEffect, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useReducedMotion } from 'framer-motion';
 import { Download, Send } from 'lucide-react';
 import { FaFacebookF, FaGithub, FaLinkedinIn } from 'react-icons/fa';
@@ -28,22 +29,13 @@ export default function HeroSidebar() {
   const contactY = useSpring(0, { stiffness: 300, damping: 22 });
   function resetContact() { setContactActive(false); contactX.set(0); contactY.set(0); }
   const reducedMotion = useReducedMotion();
-  const portraitX = useSpring(0, { stiffness: 180, damping: 22 });
-  const portraitY = useSpring(0, { stiffness: 180, damping: 22 });
+  const [portraitPokes, setPortraitPokes] = useState(0);
   const leftEyeRef = useRef<HTMLDivElement>(null);
   const rightEyeRef = useRef<HTMLDivElement>(null);
   const leftX = useMotionValue(0);
   const leftY = useMotionValue(0);
   const rightX = useMotionValue(0);
   const rightY = useMotionValue(0);
-
-  function movePortrait(event: PointerEvent<HTMLAnchorElement>) {
-    if (reducedMotion || event.pointerType !== 'mouse') return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    portraitX.set((event.clientX - rect.left - rect.width / 2) * 0.07);
-    portraitY.set((event.clientY - rect.top - rect.height / 2) * 0.07);
-  }
-  function resetPortrait() { portraitX.set(0); portraitY.set(0); }
 
   useEffect(() => {
     if (reducedMotion || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
@@ -71,30 +63,13 @@ export default function HeroSidebar() {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-center gap-5 lg:justify-start">
-        <PokeButton>
-        <motion.a
-          href="#about"
-          aria-label="Get to know Axel"
-          title="Get to know me"
-          onPointerMove={movePortrait}
-          onPointerLeave={resetPortrait}
-          onPointerCancel={resetPortrait}
-          onBlur={resetPortrait}
-          whileTap={reducedMotion ? undefined : { scale: 0.97 }}
-          className="group relative block size-24 shrink-0 rounded-full ring-1 ring-line ring-offset-4 ring-offset-page transition-[box-shadow] hover:ring-line-strong focus-visible:ring-line-strong"
-        >
-          <span className="absolute inset-0 overflow-hidden rounded-full">
-            <motion.span className="absolute -inset-1" style={{ x: reducedMotion ? 0 : portraitX, y: reducedMotion ? 0 : portraitY }}>
-              <Image src="/assets/profile_xelpaxu.jpg" alt="Axel John Nuqui" fill sizes="104px" className="object-cover" priority />
-            </motion.span>
-          </span>
-
-        </motion.a>
+        <PokeButton onPoke={() => setPortraitPokes(value => value + 1)}>
+          <HeroPortrait pokes={portraitPokes} />
         </PokeButton>
       </div>
       <div>
-        <h1 className="font-display text-5xl font-bold tracking-tight lg:text-[2.8rem]">Axel John Nuqui</h1>
-        <p className="mt-2 text-lg leading-7 text-muted">Aspiring Full Stack AI Engineer</p>
+        <h1 className="hero-name text-5xl font-bold tracking-tight lg:text-[2.8rem]">Axel John Nuqui</h1>
+        <p className="mt-2 text-lg leading-7 text-muted">Full Stack Software Developer</p>
         <p className="mt-2 text-sm text-subtle">{profile.location}</p>
       </div>
 
@@ -128,7 +103,7 @@ export default function HeroSidebar() {
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-2 -mt-5">
         <motion.a
-          href="/NUQUI_CV.pdf"
+          href="/NUQUI_Resume.pdf"
           aria-label="Open Axel’s resume PDF (opens in a new tab)"
           onPointerEnter={() => setResumeActive(true)}
           onPointerMove={event => { if (reducedMotion || event.pointerType !== 'mouse') return; const rect = event.currentTarget.getBoundingClientRect(); resumeX.set((event.clientX - rect.left - rect.width / 2) * 0.045); resumeY.set((event.clientY - rect.top - rect.height / 2) * 0.07); }}
@@ -173,7 +148,7 @@ export default function HeroSidebar() {
             </div>
           </div>
         </motion.a>
-        <motion.a href="/NUQUI_CV.pdf" download="Axel-John-Nuqui-Resume.pdf" aria-label="Download Axel’s resume PDF" title="Download resume" whileHover={reducedMotion ? undefined : { y: 2 }} whileTap={reducedMotion ? undefined : { scale: 0.9 }} className="flex size-11 items-center justify-center rounded-full border border-line text-muted transition-colors hover:border-accent hover:text-accent"><Download className="size-4" aria-hidden="true" /></motion.a>
+        <motion.a href="/NUQUI_Resume.pdf" download="Axel-John-Nuqui-Resume.pdf" aria-label="Download Axel’s resume PDF" title="Download resume" whileHover={reducedMotion ? undefined : { y: 2 }} whileTap={reducedMotion ? undefined : { scale: 0.9 }} className="flex size-11 items-center justify-center rounded-full border border-line text-muted transition-colors hover:border-accent hover:text-accent"><Download className="size-4" aria-hidden="true" /></motion.a>
         </div>
 
         <div className="flex items-center gap-2">
@@ -199,7 +174,7 @@ export default function HeroSidebar() {
         {/* Social Icons Array */}
         <div className="flex items-center gap-2 pt-1">
           <a
-            href="https://linkedin.com/in/yourusername"
+            href="https://www.linkedin.com/in/xelpaxu/"
             target="_blank"
             rel="noopener noreferrer"
             className="flex h-11 w-11 items-center justify-center rounded-lg bg-transparent text-muted transition hover:bg-surface hover:text-foreground"

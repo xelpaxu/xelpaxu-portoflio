@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Pointer, Heart, Sparkles, Star, Zap } from 'lucide-react';
 import { subscribeNekoSteps, type NekoStep } from '@/lib/neko-events';
 
-export default function PokeButton({ children }: { children: ReactNode }) {
+export default function PokeButton({ children, onPoke }: { children: ReactNode; onPoke?: () => void }) {
   const [count, setCount] = useState<number | null>(null);
   const [error, setError] = useState(false);
   const pending = useRef(0);
@@ -85,6 +85,7 @@ export default function PokeButton({ children }: { children: ReactNode }) {
 
   function poke() {
     burst();
+    onPoke?.();
     hasPoked.current = true;
     pending.current++;
     setCount(value => (value ?? 0) + 1);
