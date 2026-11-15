@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
-import { experienceLabel, experienceDescription } from '@/data/experience/experience';
+import { workExperiences } from '@/data/experience/work-experience';
 import PageHeader from '@/components/PageHeader';
 import RouteShell from '@/components/RouteShell';
 import ExperienceArchive from '@/components/experience/ExperienceArchive';
 
 export const metadata: Metadata = {
-  title: `${experienceLabel} | Axel John Nuqui`,
-  description: `${experienceLabel} and the learning journey of Axel John Nuqui.`,
+  title: 'Experience | Axel John Nuqui',
+  description: 'Project experience and the learning journey of Axel John Nuqui.',
 };
 export default function ExperiencePage() {
   return <RouteShell>
-    <PageHeader title={experienceLabel} description={experienceDescription} />
+    <PageHeader title="Experience" description={workExperiences.length ? "Frontend, full-stack, and product development. The teams I have worked with and what I contributed along the way." : "Learning, growing, and looking ahead to new opportunities."} />
     <ExperienceArchive />
   </RouteShell>;
 }
