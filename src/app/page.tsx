@@ -32,7 +32,7 @@ export default function HomePage() {
                 <StackAndTools />
               </section>
               <section id="testimonials" aria-labelledby="testimonials-heading" className="scroll-mt-28">
-                <SectionHeader title="Featured testimonials" subtitle="From co-developers" id="testimonials-heading" />
+                <SectionHeader title="Featured testimonials" subtitle="From co-developers, professors, and users" id="testimonials-heading" />
                 <Testimonials />
               </section>
               <section id="about" aria-labelledby="about-heading" className="scroll-mt-28">

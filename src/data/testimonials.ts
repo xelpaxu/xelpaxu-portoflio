@@ -21,6 +21,16 @@ export const testimonialRelationshipLabels: Record<Testimonial['relationship'], 
 // Images can be local paths under public/ (recommended) or full image URLs.
 export const testimonials: Testimonial[] = [
   {
+    id: 'sirralph-prof',
+    name: 'Ralph Voltaire J. Dayot',
+    role: 'Division Chair - CS | Prof and Research Adviser',
+    relationship: 'professor',
+    quote: "Axel is a dedicated researcher and adept programmer who consistently demonstrates strong technical mastery and work ethic. Throughout his coursework and research under my supervision, he has stood out for his diligence, proactive communication, and ability to solve complex problems independently.",
+    projectId: ['vecpro'],
+    featured: true,
+    image: '/assets/testimonials/sir-ralph.jpg',
+  },
+  {
     id: 'joelmar-dev',
     name: 'Joelmar D. Grecia',
     role: 'Frontend developer',
