@@ -82,6 +82,6 @@ function StackPanel({ id, labelledBy, tags, reducedMotion }: {
   return <motion.div role="tabpanel" id={id} aria-labelledby={labelledBy}
     aria-hidden={!present || undefined} tabIndex={present ? 0 : -1} className="stack-panel"
     initial={reducedMotion ? false : 'hidden'} animate="visible" exit="exit">
-    <TechStack tags={tags} animated={!reducedMotion} interactive goTo={goToTechnologies} />
+    <TechStack tags={tags} animated={!reducedMotion} interactive goTo={goToTechnologies} keycaps />
   </motion.div>;
 }

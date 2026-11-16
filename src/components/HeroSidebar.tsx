@@ -67,7 +67,7 @@ export default function HeroSidebar() {
           <HeroPortrait pokes={portraitPokes} />
         </PokeButton>
       </div>
-      <div>
+      <div className="text-center lg:text-left">
         <h1 className="hero-name text-5xl font-bold tracking-tight lg:text-[2.8rem]">Axel John Nuqui</h1>
         <p className="mt-2 text-lg leading-7 text-muted">Full Stack Software Developer</p>
         <p className="mt-2 text-sm text-subtle">{profile.location}</p>

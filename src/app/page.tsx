@@ -15,8 +15,8 @@ export default function HomePage() {
     <>
       <main id="main-content" className="relative z-10 min-h-screen">
         <Navbar />
-        <div className="home-layout mx-auto max-w-6xl px-5 pb-16 pt-32 sm:px-6 sm:pb-24 mt-18">
-          <aside className="home-sidebar mt-18" aria-label="About Axel"><HeroSidebar /></aside>
+        <div className="home-layout mx-auto max-w-6xl px-5 pb-16 pt-24 sm:px-6 sm:pb-24 md:pt-32 md:mt-18">
+          <aside className="home-sidebar md:mt-18" aria-label="About Axel"><HeroSidebar /></aside>
           <div className="home-content min-w-0">
             <div className="space-y-16 sm:space-y-20">
               <section aria-labelledby="experience-heading" className="scroll-mt-28">

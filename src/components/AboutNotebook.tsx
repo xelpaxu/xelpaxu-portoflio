@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { ArrowUpRight, CornerDownLeft, MessageCircle, RotateCcw } from 'lucide-react';
+import { ArrowUpRight, Camera, CornerDownLeft, MessageCircle, RotateCcw } from 'lucide-react';
 import { profile } from '@/data/profile';
 import AboutLikeButton from '@/components/AboutLikeButton';
+import PhotoFan from '@/components/PhotoFan';
 import dynamic from 'next/dynamic';
 import { useContact } from './ContactProvider';
 
@@ -43,6 +44,7 @@ const questions = [
 export default function AboutNotebook() {
   const { openContact } = useContact();
   const [selected, setSelected] = useState(0);
+  const [view, setView] = useState<'qa' | 'photos'>('qa');
   const [pending, setPending] = useState(false);
   const [visited, setVisited] = useState<number[]>([0]);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -72,12 +74,21 @@ export default function AboutNotebook() {
     <div className="bg-transparent">
       <div className="mb-7 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="flex size-10 items-center justify-center rounded-full border border-accent/30 text-accent"><MessageCircle className="size-4" aria-hidden="true" /></span>
-          <div><h3 className="text-sm font-medium text-strong">Let’s skip the long bio.</h3><p className="mt-1 text-xs text-muted">Pick a question below.</p></div>
+          <span className="flex size-10 items-center justify-center rounded-full border border-accent/30 text-accent">{view === 'qa' ? <MessageCircle className="size-4" aria-hidden="true" /> : <Camera className="size-4" aria-hidden="true" />}</span>
+          <div><h3 className="text-sm font-medium text-strong">Let’s skip the long bio.</h3><p className="mt-1 text-xs text-muted">{view === 'qa' ? 'Pick a question below.' : 'Click the stack to shuffle — or drag it.'}</p></div>
         </div>
-        <button type="button" onClick={reset} aria-label="Restart the questions" title="Start over" className="flex size-11 shrink-0 items-center justify-center rounded-full text-subtle transition-colors hover:text-accent"><RotateCcw className="size-4" aria-hidden="true" /></button>
+        <div className="flex shrink-0 items-center gap-2">
+          {view === 'qa' && <button type="button" onClick={reset} aria-label="Restart the questions" title="Start over" className="flex size-11 shrink-0 items-center justify-center rounded-full text-subtle transition-colors hover:text-accent"><RotateCcw className="size-4" aria-hidden="true" /></button>}
+          <div className="flex shrink-0 items-center rounded-full border border-line bg-surface p-1" role="group" aria-label="Switch between questions and photos">
+            <button type="button" onClick={() => setView('qa')} aria-pressed={view === 'qa'} className={`flex min-h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-colors ${view === 'qa' ? 'bg-accent/10 text-accent' : 'text-muted hover:text-foreground'}`}><MessageCircle className="size-3.5" aria-hidden="true" />Q&amp;A</button>
+            <button type="button" onClick={() => setView('photos')} aria-pressed={view === 'photos'} className={`flex min-h-8 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-colors ${view === 'photos' ? 'bg-accent/10 text-accent' : 'text-muted hover:text-foreground'}`}><Camera className="size-3.5" aria-hidden="true" />Photos</button>
+          </div>
+        </div>
       </div>
 
+      <AnimatePresence mode="wait" initial={false}>
+        {view === 'qa' ? (
+          <motion.div key="qa" initial={false} exit={{ opacity: 0, y: reducedMotion ? 0 : -8 }} transition={{ duration: reducedMotion ? 0 : 0.22 }}>
       <div className="grid gap-7 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.25fr)] sm:gap-8">
         <div className="flex flex-col gap-1" role="group" aria-label="Questions about Axel">
           {questions.map(({ question }, index) => <button key={question} type="button" onClick={() => ask(index)} aria-pressed={selected === index} aria-controls="about-answer" className={`group relative flex min-h-14 items-center gap-3 rounded-r-xl border-l-2 py-3 pl-4 pr-3 text-left text-sm transition-colors ${selected === index ? 'border-accent text-accent' : 'border-transparent text-muted hover:border-accent/30 hover:text-foreground'}`}>
@@ -106,6 +117,13 @@ export default function AboutNotebook() {
           </div>
         </div>
       </div>
+          </motion.div>
+        ) : (
+          <motion.div key="photos" initial={{ opacity: 0, y: reducedMotion ? 0 : 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reducedMotion ? 0 : -8 }} transition={{ duration: reducedMotion ? 0 : 0.22 }}>
+            <PhotoFan />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <AboutLikeButton />
     </div>
   );

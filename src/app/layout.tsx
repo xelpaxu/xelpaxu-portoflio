@@ -40,7 +40,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: `try{var savedTheme=localStorage.getItem('portfolio-theme');document.documentElement.dataset.theme=['light','dark'].includes(savedTheme)?savedTheme:'dark';var accent=localStorage.getItem('portfolio-accent');document.documentElement.dataset.accent=['default','violet','blue','mint','rose','amber'].includes(accent)?accent:'default'}catch{document.documentElement.dataset.accent='default'}` }} />
       </head>
       <body
-        className={`${hankenGrotesk.className} ${hankenGrotesk.variable} ${plusJakartaSans.variable} bg-page text-foreground antialiased`}
+        className={`${hankenGrotesk.className} ${hankenGrotesk.variable} ${plusJakartaSans.variable} bg-page text-foreground antialiased pb-24 md:pb-0`}
       >
           <ThemeProvider><ContactProvider><SmoothScrolling /><ShaderBackground /><GrainOverlay />{children}<NekoCompanion /></ContactProvider></ThemeProvider>
           <StartupReveal /><ClickBurst />

@@ -5,10 +5,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, useReducedMotion } from 'framer-motion';
-import { BriefcaseBusiness, Folder, Moon, Sun } from 'lucide-react';
+import { BriefcaseBusiness, Folder, House, Moon, PenLine, Search, Sun } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 import AccentPicker from './AccentPicker';
 import PortfolioSearch from './PortfolioSearch';
+
+const navItems = [
+  { href: '/', label: 'Home', icon: House, key: 'profile' },
+  { href: '/experience', label: 'Experience', icon: BriefcaseBusiness, key: 'experience' },
+  { href: '/projects', label: 'Projects', icon: Folder, key: 'projects' },
+  { href: '/blog', label: 'Blogs', icon: PenLine, key: 'blog' },
+] as const;
 
 export default function Navbar() {
   const reducedMotion = useReducedMotion();
@@ -89,28 +96,28 @@ export default function Navbar() {
               href="/experience"
               aria-label="Experience"
               title="Experience"
-              className={`inline-flex min-h-11 items-center rounded-full px-2 py-1.5 text-xs font-medium transition-all duration-300 md:px-3 md:text-base ${
+              className={`hidden md:inline-flex min-h-11 items-center rounded-full px-3 py-1.5 text-base font-medium transition-all duration-300 ${
                 activeSection === 'experience'
                   ? 'text-accent'
                   : 'text-muted hover:text-foreground'
               }`}
             >
-              <BriefcaseBusiness className="size-4 min-[400px]:hidden" aria-hidden="true" /><span className="hidden min-[400px]:inline">Experience</span>
+              Experience
             </Link>
 
             <Link
               href="/projects"
               aria-label="Projects"
               title="Projects"
-              className={`inline-flex min-h-11 items-center rounded-full px-2 py-1.5 text-xs font-medium transition-all duration-300 md:px-3 md:text-base ${
+              className={`hidden md:inline-flex min-h-11 items-center rounded-full px-3 py-1.5 text-base font-medium transition-all duration-300 ${
                 activeSection === 'projects'
                   ? 'text-accent'
                   : 'text-muted hover:text-foreground'
               }`}
             >
-              <Folder className="size-4 min-[400px]:hidden" aria-hidden="true" /><span className="hidden min-[400px]:inline">Projects</span>
+              Projects
             </Link>
-            <Link href="/blog" aria-current={activeSection === 'blog' ? 'page' : undefined} className={`inline-flex min-h-11 items-center rounded-full px-2 py-1.5 text-xs font-medium transition-all duration-300 md:px-3 md:text-base ${activeSection === 'blog' ? 'text-accent' : 'text-muted hover:text-foreground'}`}>Blogs</Link>
+            <Link href="/blog" aria-current={activeSection === 'blog' ? 'page' : undefined} className={`hidden md:inline-flex min-h-11 items-center rounded-full px-3 py-1.5 text-base font-medium transition-all duration-300 ${activeSection === 'blog' ? 'text-accent' : 'text-muted hover:text-foreground'}`}>Blogs</Link>
           </div>
 
           {/* Right group - Search */}
@@ -148,6 +155,40 @@ export default function Navbar() {
           </div>
         </div>
       </motion.div>
+
+      {/* Floating bottom navigation for touch / small-screen layouts */}
+      <nav
+        data-scrolled={isScrolled}
+        aria-label="Primary"
+        className="portfolio-navbar border-line bg-surface fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 z-50 flex -translate-x-1/2 items-center gap-0.5 rounded-full border-[0.5px] py-1 shadow-navigation backdrop-blur-xl md:hidden"
+      >
+        {navItems.map(({ href, label, icon: Icon, key }) => {
+          const active = activeSection === key;
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-current={active ? 'page' : undefined}
+              className={`flex min-h-12 min-w-14 flex-col items-center justify-center gap-0.5 rounded-full px-2 text-[10px] font-medium transition-colors ${
+                active ? 'text-accent' : 'text-muted hover:text-foreground'
+              }`}
+            >
+              <Icon className="size-5" aria-hidden="true" />
+              {label}
+            </Link>
+          );
+        })}
+        <span className="mx-0.5 h-8 w-px bg-line" aria-hidden="true" />
+        <button
+          type="button"
+          onClick={() => setIsSearchOpen(true)}
+          aria-label="Search"
+          className="flex min-h-12 min-w-14 flex-col items-center justify-center gap-0.5 rounded-full px-2 text-[10px] font-medium text-muted transition-colors hover:text-foreground"
+        >
+          <Search className="size-5" aria-hidden="true" />
+          Search
+        </button>
+      </nav>
 
       {isSearchOpen && <PortfolioSearch onClose={() => setIsSearchOpen(false)} />}
     </>
