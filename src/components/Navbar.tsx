@@ -141,7 +141,7 @@ export default function Navbar() {
               <span className="text-xs text-muted transition-colors group-hover:text-foreground md:text-sm">
                 Search
               </span>
-              <span className="hidden text-[9px] font-medium text-subtle md:inline-block">
+              <span className="hidden text-[8px] font-medium text-subtle md:inline-block">
                 Ctrl + K
               </span>
             </button>
