@@ -35,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="dark" suppressHydrationWarning>
+    <html lang="en" data-theme="light" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: `var systemTheme=window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=systemTheme;try{var savedTheme=localStorage.getItem('portfolio-theme');document.documentElement.dataset.theme=['light','dark'].includes(savedTheme)?savedTheme:systemTheme;var accent=localStorage.getItem('portfolio-accent');document.documentElement.dataset.accent=['default','violet','blue','mint','rose','amber'].includes(accent)?accent:'default'}catch{document.documentElement.dataset.accent='default'}` }} />
       </head>

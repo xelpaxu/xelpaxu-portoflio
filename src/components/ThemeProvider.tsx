@@ -7,7 +7,7 @@ type Theme = 'dark' | 'light';
 const ThemeContext = createContext<{ theme: Theme; toggleTheme: () => void } | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark');
+  const [theme, setTheme] = useState<Theme>('light');
   const transitionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const transitioning = useRef(false);
 
