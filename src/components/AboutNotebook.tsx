@@ -14,6 +14,11 @@ const IloiloMap = dynamic(() => import('./IloiloMap'), { ssr: false, loading: ()
 
 const questions = [
   {
+    question: 'Where do you live?',
+    answer: 'I call Iloilo City, Philippines home.',
+    map: true,
+  },
+  {
     question: 'How did you get started?',
     answer: 'Google Sites, back in 2017 where I built my first website (which really got my interest in web). Then when I was in grade 12, I joined MIT App Invention Contest, where we were one of the top 10 finalists.',
     link: '/experience', label: 'See the journey'
@@ -27,11 +32,6 @@ const questions = [
     question: 'What are you curious about?',
     answer: "I'm really curious and interested about system design where it really got me doom scrolling tiktok just by stalking those rick and morty or family guy explanations about system design.",
     link: '/projects/memowee', label: 'See the experiment'
-  },
-  {
-    question: 'Where do you live?',
-    answer: 'I call Iloilo City, Philippines home.',
-    map: true,
   },
   {
     question: 'Can we build something?',
